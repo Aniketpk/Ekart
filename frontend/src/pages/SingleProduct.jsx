@@ -2,8 +2,8 @@ import React from 'react'
 import { useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import Breadcrums from '../components/ui/Breadcrums'
-import ProductImg from '../components/ui/productImg'
-import ProductDesc from '@/components/ui/ProductDesc'
+import ProductImg from '../components/ui/ProductImg'
+import ProductDesc from '../components/ui/ProductDesc'
 
 const SingleProduct = () => {
     const params = useParams()
