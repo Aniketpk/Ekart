@@ -28,10 +28,15 @@ const allowedOrigins = [
 app.use(express.json());
 app.use(cors({
     origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
+        if (!origin) return callback(null, true);
+
+        const cleanOrigin = origin.replace(/\/$/, '');
+        const isAllowed = allowedOrigins.some(o => o.replace(/\/$/, '') === cleanOrigin);
+
+        if (isAllowed || cleanOrigin.endsWith('.vercel.app')) {
             return callback(null, true);
         }
-        return callback(new Error("Not allowed by CORS"));
+        return callback(new Error(`Not allowed by CORS: ${origin}`));
     },
     credentials: true
 }))

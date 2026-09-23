@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const connectDB = async (retries = 5, delay = 5000) => {
     for (let attempt = 1; attempt <= retries; attempt++) {
         try {
-            await mongoose.connect(`${process.env.MONGO_URL}/ekart`);
+            await mongoose.connect(process.env.MONGO_URL, { dbName: 'ekart' });
             console.log('✅ Connected to MongoDB successfully');
             return;
         } catch (error) {
