@@ -1,0 +1,26 @@
+{
+  "name": "ekart-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.9.0",
+    "cors": "^2.8.6",
+    "datauri": "^4.1.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.1.4",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^7.0.12",
+    "nodemon": "^3.1.11",
+    "razorpay": "^2.9.6"
+  }
+}
