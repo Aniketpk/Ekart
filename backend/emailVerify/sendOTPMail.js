@@ -1,4 +1,4 @@
-export const sendOTPmail = async (email, otp) => {
+export const sendOTPMail = async (email, otp) => {
   try {
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
