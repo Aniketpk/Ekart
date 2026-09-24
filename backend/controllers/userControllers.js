@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt, { decode } from 'jsonwebtoken';
 import { sendEmail } from '../emailVerify/verifyEmail.js';
 import { session } from '../models/sessionModel.js';
-import { sendOTPMail } from '../emailVerify/sendOTPMail.js';
+import { sendOTPMail } from "../emailVerify/sendOTPMail.js";
 
 import cloudinary from "../utils/cloudinary.js";
 
