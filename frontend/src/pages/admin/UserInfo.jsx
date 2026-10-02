@@ -1,11 +1,11 @@
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, Loader2 } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Input } from '@/components/ui/input'
-import userLogo from '../../assets/user.jpg'
+import userLogo from '../../assets/user-avatar.jpg'
 import axios from 'axios'
 import { toast } from 'sonner'
 
@@ -27,7 +27,7 @@ const UserInfo = () => {
   const [file, setFile] = useState(null)
   const [loading, setLoading] = useState(false)
 
-  const getUser = async () => {
+  const getUser = useCallback(async () => {
     const accessToken = localStorage.getItem("accessToken")
     try {
       const res = await axios.get(`${import.meta.env.VITE_URL}/api/v1/user/get-user/${id}`, {
@@ -42,11 +42,11 @@ const UserInfo = () => {
     } catch (error) {
       console.log(error)
     }
-  }
+  }, [id])
 
   useEffect(() => {
     getUser()
-  }, [id])
+  }, [getUser])
 
   const handleChange = (e) => {
     setUpdateUser({ ...updateUser, [e.target.name]: e.target.value })
@@ -105,17 +105,17 @@ const UserInfo = () => {
           <div className="w-full flex flex-col md:flex-row gap-12 items-start">
             {/* profile image */}
             <div className="flex flex-col items-center gap-4 w-full md:w-auto">
-              <div className="w-40 h-40 rounded-full overflow-hidden border-2 border-[#1a237e] shadow-ambient bg-[#f5f5f7] flex items-center justify-center">
+              <div className="w-40 h-40 rounded-full overflow-hidden border-2 border-[#173b5c] shadow-ambient bg-[#f5f5f7] flex items-center justify-center">
                 <img src={updateUser?.profilePic || userLogo} alt="profile" className="w-full h-full object-cover" />
               </div>
-              <Label className='cursor-pointer bg-[#1a237e] text-white px-5 py-2.5 rounded hover:bg-[#0d1759] transition-colors duration-200 font-medium text-sm shadow-sm'>
+              <Label className='cursor-pointer bg-[#173b5c] text-white px-5 py-2.5 rounded hover:bg-[#102c47] transition-colors duration-200 font-medium text-sm shadow-sm'>
                 Change Image
                 <input type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
               </Label>
             </div>
             {/* profile form */}
-            <form onSubmit={handleSubmit} className='space-y-4 shadow-ambient border border-[#f0f0f0] p-8 rounded-lg bg-white flex-1 w-full'>
-              <div className="grid grid-cols-2 gap-4">
+            <form onSubmit={handleSubmit} className='glass-surface-strong flex-1 w-full space-y-4 rounded-2xl p-5 sm:p-8'>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <Label className='block text-sm font-medium'>First Name</Label>
                   <Input type="text" name="firstName" value={updateUser?.firstName || ""} onChange={handleChange} placeholder="First Name" className="w-full border rounded-lg px-3 py-2 my-1 " />
@@ -137,7 +137,7 @@ const UserInfo = () => {
                 <Label className='block text-sm font-medium'>Address</Label>
                 <Input type="text" name="address" value={updateUser?.address || ""} onChange={handleChange} placeholder="Address" className="w-full border rounded-lg px-3 py-2 my-1 " />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <Label className='block text-sm font-medium'>City</Label>
                   <Input type="text" name="city" value={updateUser?.city || ""} onChange={handleChange} placeholder="City" className="w-full border rounded-lg px-3 py-2 my-1 " />
@@ -170,13 +170,13 @@ const UserInfo = () => {
 
               {
                 loading ? (
-                  <Button disabled className="w-full mt-6 bg-[#1a237e] text-white font-medium py-2.5 rounded hover:bg-[#0d1759] transition-colors">
+                  <Button disabled className="w-full mt-6 bg-[#173b5c] text-white font-medium py-2.5 rounded hover:bg-[#102c47] transition-colors">
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Please Wait
                   </Button>
                 ) : (
 
-                  <Button type="submit" className="w-full mt-6 bg-[#1a237e] text-white font-medium py-2.5 rounded hover:bg-[#0d1759] transition-colors shadow-sm hover:shadow-ambient">Update Profile</Button>
+                  <Button type="submit" className="w-full mt-6 bg-[#173b5c] text-white font-medium py-2.5 rounded hover:bg-[#102c47] transition-colors shadow-sm hover:shadow-ambient">Update Profile</Button>
                 )
               }
             </form>

@@ -1,19 +1,19 @@
-import { LayoutDashboard, PackagePlus, PackageSearch, Users, Settings, FileText } from 'lucide-react'
+import { LayoutDashboard, PackagePlus, PackageSearch, Users } from 'lucide-react'
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 import { FaRegEdit } from 'react-icons/fa'
 
 const navItemClass = ({ isActive }) =>
-    `text-sm ${isActive ? 'bg-[#1a237e] text-white' : 'bg-transparent text-[#121212] hover:bg-[#e0e0ff]'} flex items-center gap-3 font-medium cursor-pointer p-3 rounded-md w-full transition-colors duration-200`
+    `text-xs md:text-sm ${isActive ? 'bg-[#173b5c] text-white shadow-sm' : 'text-slate-600 hover:bg-white/70 hover:text-[#173b5c]'} flex items-center gap-2 md:gap-3 font-medium cursor-pointer p-2.5 md:p-3 rounded-xl md:w-full whitespace-nowrap transition-colors duration-200`
 
 const Sidebar = () => {
     return (
-        <div className='hidden fixed md:block border-r bg-white border-[#e0e0e0] w-[240px] p-5 pt-24 h-screen z-10 top-0 left-0'>
-            <div className='pt-6 space-y-6'>
+        <div className='fixed left-3 right-3 top-[82px] z-40 w-auto overflow-x-auto rounded-full glass-surface-strong px-2 py-1.5 shadow-lg md:left-4 md:right-auto md:top-24 md:h-[calc(100vh-112px)] md:w-[232px] md:overflow-x-hidden md:overflow-y-auto md:rounded-[1.65rem] md:border-white/80 md:p-4 md:pt-5'>
+            <div className='flex w-max items-center gap-1 md:w-auto md:flex-col md:items-stretch md:gap-6 md:pt-2'>
                 {/* Management Section */}
                 <div>
-                    <p className='text-[10px] font-display uppercase tracking-widest text-[#5c5c6d] mb-3 px-3'>Management</p>
-                    <div className='space-y-1'>
+                    <p className='hidden text-[10px] font-display uppercase tracking-widest text-[#5c5c6d] mb-3 px-3 md:block'>Management</p>
+                    <div className='flex items-center gap-1 md:flex-col md:items-stretch md:gap-1'>
                         <NavLink to='/dashboard/sales' className={navItemClass}>
                             <LayoutDashboard className="w-[18px] h-[18px]" /><span>Dashboard</span>
                         </NavLink>
@@ -36,23 +36,6 @@ const Sidebar = () => {
                     </div>
                 </div>
 
-                {/* Settings Section */}
-                <div>
-                    <p className='text-[10px] font-display uppercase tracking-widest text-[#5c5c6d] mb-3 px-3'>Settings</p>
-                    <div className='space-y-1'>
-                        <NavLink to='/dashboard/sales' end={false} className={({ isActive }) =>
-                            `text-sm bg-transparent text-[#121212] hover:bg-[#e0e0ff] flex items-center gap-3 font-medium cursor-pointer p-3 rounded-md w-full transition-colors duration-200`
-                        }>
-                            <Settings className="w-[18px] h-[18px]" /><span>Configuration</span>
-                        </NavLink>
-
-                        <NavLink to='/dashboard/sales' end={false} className={({ isActive }) =>
-                            `text-sm bg-transparent text-[#121212] hover:bg-[#e0e0ff] flex items-center gap-3 font-medium cursor-pointer p-3 rounded-md w-full transition-colors duration-200`
-                        }>
-                            <FileText className="w-[18px] h-[18px]" /><span>Reports</span>
-                        </NavLink>
-                    </div>
-                </div>
             </div>
         </div>
     )

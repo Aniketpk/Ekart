@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { OrderCard } from '@/components/ui/OrderCard'
 import axios from 'axios'
 import { useParams } from 'react-router-dom'
@@ -8,7 +8,7 @@ const ShowUserOrders = () => {
   const [userOrder, setUserOrder] = useState([])
   const [loading, setLoading] = useState(true)
 
-  const getUserOrders = async () => {
+  const getUserOrders = useCallback(async () => {
     try {
       const accessToken = localStorage.getItem("accessToken")
       const res = await axios.get(`${import.meta.env.VITE_URL}/api/v1/order/user-order/${params.userId}`, {
@@ -27,13 +27,13 @@ const ShowUserOrders = () => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [params.userId])
 
   useEffect(() => {
     if (params.userId) {
       getUserOrders()
     }
-  }, [params.userId])
+  }, [getUserOrders, params.userId])
 
   return (
     <div className='w-full p-6'>

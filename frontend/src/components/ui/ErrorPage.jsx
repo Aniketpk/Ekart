@@ -1,34 +1,31 @@
 import React from 'react';
-import { useRouteError, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const ErrorPage = () => {
-    const error = useRouteError();
     const navigate = useNavigate();
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-[#fcf9f8] p-6">
-            <div className="max-w-md w-full bg-white rounded-lg shadow-ambient p-8 text-center border border-[#f0edec]">
-                <h1 className="text-4xl font-display font-bold text-[#ba1a1a] mb-4">Oops!</h1>
-                <p className="text-[#454652] font-body mb-6">Sorry, an unexpected error has occurred.</p>
-                <div className="bg-[#ffdad6] text-[#93000a] p-4 rounded text-sm font-mono-label mb-8 break-words text-left">
-                    <i>{error?.statusText || error?.message || "Unknown Error"}</i>
-                </div>
+        <main className="flex min-h-screen flex-col items-center justify-center bg-transparent p-6">
+            <div className="w-full max-w-md glass-surface-strong rounded-[2rem] p-8 text-center shadow-xl">
+                <p className="font-mono-label mb-3 text-[#173b5c]">E-Kart</p>
+                <h1 className="mb-3 font-display text-3xl font-bold text-slate-950">This page didn’t load</h1>
+                <p className="mb-8 text-sm leading-6 text-slate-600">Something went wrong while opening this page. You can go back or return to the storefront.</p>
                 <div className="flex gap-4 justify-center">
                     <button 
                         onClick={() => navigate(-1)}
-                        className="px-6 py-2 rounded font-medium border border-[#outline] text-[#454652] hover:bg-[#f6f3f2] transition-colors"
+                        className="rounded-xl border border-slate-200 px-5 py-2.5 font-medium text-slate-700 transition-colors hover:bg-slate-50"
                     >
                         Go Back
                     </button>
                     <button 
                         onClick={() => navigate('/')}
-                        className="px-6 py-2 rounded font-medium bg-[#000666] text-white hover:bg-[#1a237e] transition-colors"
+                        className="rounded-xl bg-[#173b5c] px-5 py-2.5 font-medium text-white transition-colors hover:bg-[#102c47]"
                     >
                         Go Home
                     </button>
                 </div>
             </div>
-        </div>
+        </main>
     );
 }
 

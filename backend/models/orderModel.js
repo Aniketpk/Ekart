@@ -6,16 +6,27 @@ const orderschema = new mongoose.Schema({
         ref:"User" ,
         required:true
     },
-    products: [
+   products: [
         {
             productId: {type: mongoose.Schema.Types.ObjectId,ref:"Product", required:true},
-            quantity:{type: Number, required:true}
+            quantity:{type: Number, required:true},
+            price:{type:Number, min:0}
         }
     
    ],
    amount : {type:Number, required:true},
    tax:{type:Number,required:true},
    shipping:{type:Number,required:true},
+   address: {
+       fullName: { type: String },
+       email: { type: String },
+       phone: { type: String },
+       street: { type: String },
+       city: { type: String },
+       state: { type: String },
+       zipCode: { type: String },
+       country: { type: String }
+   },
    currency:{type:String,default:"INR"},
    status:{type:String,enum:["Pending","Paid","Failed"],default:"Pending"},
 

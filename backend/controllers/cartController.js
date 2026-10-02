@@ -19,7 +19,7 @@ export const getCart = async (req, res) => {
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message: error.message
+            message: "The request could not be completed"
         })
     }
 }
@@ -50,6 +50,9 @@ export const addToCart = async (req, res) => {
             const itemIndex = cart.items.findIndex((item) => item.productId.toString() === productId);
             if (itemIndex > -1) {
                 //product exists, increase quantity
+                if (cart.items[itemIndex].quantity >= 99) {
+                    return res.status(422).json({ success: false, message: "Maximum quantity per product is 99" });
+                }
                 cart.items[itemIndex].quantity += 1;
             } else {
                 //product doesn't exist, add it
@@ -74,7 +77,7 @@ export const addToCart = async (req, res) => {
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message: error.message
+            message: "The request could not be completed"
         })
     }
 }
@@ -83,6 +86,9 @@ export const updateQuantity = async (req, res) => {
     try {
         const userId = req.id;
         const { productId, type } = req.body;
+        if (!productId || !["increase", "decrease"].includes(type)) {
+            return res.status(422).json({ success: false, message: "A product and valid quantity action are required" });
+        }
 
         let cart = await Cart.findOne({ userId });
         if (!cart) {
@@ -98,6 +104,9 @@ export const updateQuantity = async (req, res) => {
                 message: "Product not found in cart"
             })
 
+        if (type === "increase" && cart.items[itemIndex].quantity >= 99) {
+            return res.status(422).json({ success: false, message: "Maximum quantity per product is 99" });
+        }
         if (type === "increase") cart.items[itemIndex].quantity += 1;
         if (type === "decrease" && cart.items[itemIndex].quantity > 1) cart.items[itemIndex].quantity -= 1;
 
@@ -115,7 +124,7 @@ export const updateQuantity = async (req, res) => {
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message: error.message
+            message: "The request could not be completed"
         })
     }
 }
@@ -144,8 +153,7 @@ export const removeFromCart = async (req, res) => {
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message: error.message
+            message: "The request could not be completed"
         })
     }
 }
-

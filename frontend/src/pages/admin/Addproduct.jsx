@@ -44,7 +44,7 @@ const Addproduct = () => {
 
     if (productData.productImg.length === 0) {
       toast.error("please select at least one image ");
-      requestFormReset;
+      return;
     }
     productData.productImg.forEach((img) => {
       formData.append("files", img)
@@ -114,7 +114,7 @@ const Addproduct = () => {
           </div>
           <CardFooter className='flex-col gap-2 mt-4'>
             <Button disabled={loading} onClick={submitHandler}
-              className='w-full mt-6 bg-[#1a237e] hover:bg-[#0d1759] text-white cursor-pointer rounded'
+              className='w-full mt-6 bg-[#173b5c] hover:bg-[#102c47] text-white cursor-pointer rounded'
               type="submit">
               {loading ? <span className='flex gap-1 items-center'><Loader2 className='animate-spin' />Please wait...</span> : "Add Product"}
             </Button>

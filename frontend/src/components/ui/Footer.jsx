@@ -1,89 +1,18 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Facebook, Twitter, Instagram, Linkedin, Send, MapPin, Phone, Mail } from 'lucide-react'
-import { Button } from './button'
-import { Input } from './input'
+import { useSelector } from 'react-redux'
+import { ArrowUpRight, ShoppingBag } from 'lucide-react'
 
-const Footer = () => {
-    return (
-        <footer className='bg-[#121212] text-gray-400 pt-20 pb-10'>
-            <div className='max-w-[1280px] mx-auto px-6'>
-                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16'>
-                    {/* Brand */}
-                    <div className='space-y-4'>
-                        <h2 className='font-display text-2xl font-bold text-white'>
-                            Ekart
-                        </h2>
-                        <p className='text-sm leading-relaxed font-body'>
-                            Your one-stop shop for the latest electronics, fashion, and home essentials. Experience premium quality at unbeatable prices.
-                        </p>
-                        <div className='flex gap-4 pt-2'>
-                            <a href="#" className='hover:text-[#bdc2ff] transition-colors duration-200'><Facebook className='w-4 h-4' /></a>
-                            <a href="#" className='hover:text-[#bdc2ff] transition-colors duration-200'><Twitter className='w-4 h-4' /></a>
-                            <a href="#" className='hover:text-[#bdc2ff] transition-colors duration-200'><Instagram className='w-4 h-4' /></a>
-                            <a href="#" className='hover:text-[#bdc2ff] transition-colors duration-200'><Linkedin className='w-4 h-4' /></a>
-                        </div>
-                    </div>
-
-                    {/* Quick Links */}
-                    <div>
-                        <h3 className='text-white font-display font-semibold text-sm uppercase tracking-wider mb-6'>Quick Links</h3>
-                        <ul className='space-y-3 text-sm font-body'>
-                            <li><Link to="/" className='hover:text-[#bdc2ff] transition-colors duration-200'>Home</Link></li>
-                            <li><Link to="/products" className='hover:text-[#bdc2ff] transition-colors duration-200'>Shop All Products</Link></li>
-                            <li><Link to="/about" className='hover:text-[#bdc2ff] transition-colors duration-200'>About Us</Link></li>
-                            <li><Link to="/contact" className='hover:text-[#bdc2ff] transition-colors duration-200'>Contact Us</Link></li>
-                        </ul>
-                    </div>
-
-                    {/* Contact */}
-                    <div>
-                        <h3 className='text-white font-display font-semibold text-sm uppercase tracking-wider mb-6'>Contact Us</h3>
-                        <ul className='space-y-4 text-sm font-body'>
-                            <li className='flex items-start gap-3'>
-                                <MapPin className='w-4 h-4 text-[#8ad3d7] shrink-0 mt-0.5' />
-                                <span>Jemco Bus Stand , Po-Telco,Jamshudpur  </span>
-                            </li>
-                            <li className='flex items-center gap-3'>
-                                <Phone className='w-4 h-4 text-[#8ad3d7] shrink-0' />
-                                <span>+91 98359172022</span>
-                            </li>
-                            <li className='flex items-center gap-3'>
-                                <Mail className='w-4 h-4 text-[#8ad3d7] shrink-0' />
-                                <span>a922163@gmail.com</span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    {/* Newsletter */}
-                    <div>
-                        <h3 className='text-white font-display font-semibold text-sm uppercase tracking-wider mb-6'>Newsletter</h3>
-                        <p className='text-sm mb-4 font-body'>Subscribe for exclusive deals and product updates.</p>
-                        <form className='flex flex-col gap-3'>
-                            <Input
-                                type="email"
-                                placeholder="Enter your email"
-                                className='bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#bdc2ff] rounded'
-                            />
-                            <Button className='bg-[#1a237e] hover:bg-[#0d1759] text-white w-full rounded transition-colors duration-200'>
-                                Subscribe <Send className='w-3.5 h-3.5 ml-2' />
-                            </Button>
-                        </form>
-                    </div>
-                </div>
-
-                {/* Bottom */}
-                <div className='border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500 font-body'>
-                    <p>&copy; {new Date().getFullYear()} Ekart. All rights reserved.</p>
-                    <div className='flex gap-6'>
-                        <a href="#" className='hover:text-white transition-colors duration-200'>Privacy Policy</a>
-                        <a href="#" className='hover:text-white transition-colors duration-200'>Terms of Service</a>
-                        <a href="#" className='hover:text-white transition-colors duration-200'>Cookie Policy</a>
-                    </div>
-                </div>
-            </div>
-        </footer>
-    )
+export default function Footer() {
+  const { user } = useSelector((state) => state.user)
+  const linkClass = 'inline-flex min-h-9 items-center text-sm text-slate-300/85 transition hover:text-white'
+  return <footer className="relative isolate overflow-hidden bg-[#10243a] text-white">
+    <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_85%_0%,rgba(67,111,148,.32),transparent_35%),linear-gradient(140deg,#10243a,#132f49)]"/>
+    <div className="mx-auto grid max-w-[1240px] gap-10 px-5 py-12 sm:px-7 sm:py-16 md:grid-cols-[1.5fr_1fr_1fr]">
+      <div className="max-w-sm"><Link to="/" className="inline-flex items-center gap-2 font-display text-2xl font-semibold tracking-tight"><span className="grid h-9 w-9 place-items-center rounded-xl border border-white/20 bg-white/10"><ShoppingBag size={17}/></span>E-Kart</Link><p className="mt-4 text-sm leading-6 text-slate-300">Explore the E-Kart catalog, keep your cart close, and review your orders from your account.</p><Link to="/products" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-sky-200 transition hover:text-white">Explore the catalog <ArrowUpRight size={15}/></Link></div>
+      <nav aria-label="Shop links"><h2 className="mb-3 text-xs font-semibold uppercase tracking-[.18em] text-sky-200">Shop</h2><ul className="grid">{[['Home','/'],['Products','/products'],['Cart','/cart']].map(([label,to])=><li key={to}><Link className={linkClass} to={to}>{label}</Link></li>)}</ul></nav>
+      <nav aria-label="Account links"><h2 className="mb-3 text-xs font-semibold uppercase tracking-[.18em] text-sky-200">Your account</h2><ul className="grid">{user ? <><li><Link className={linkClass} to={`/profile/${user._id}`}>Profile</Link></li><li><Link className={linkClass} to="/my-orders">Orders</Link></li></> : <><li><Link className={linkClass} to="/login">Sign in</Link></li><li><Link className={linkClass} to="/signup">Create account</Link></li></>}</ul></nav>
+    </div>
+    <div className="border-t border-white/10"><div className="mx-auto flex max-w-[1240px] flex-col gap-2 px-5 py-5 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between sm:px-7"><span>© {new Date().getFullYear()} E-Kart</span><span>Product and order details are provided by the E-Kart service.</span></div></div>
+  </footer>
 }
-
-export default Footer

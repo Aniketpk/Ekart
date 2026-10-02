@@ -61,15 +61,12 @@ export const sendEmail = async (email, token) => {
         const data = await response.json();
 
         if (!response.ok) {
-            console.error("Resend API Error:", data);
             throw new Error(data.message || "Failed to send verification email");
         }
 
-        console.log("Verification email sent successfully:", data);
-
         return data;
     } catch (error) {
-        console.error("Error sending verification email:", error);
+        console.error("Verification email delivery failed:", error.name);
         throw error;
     }
 };

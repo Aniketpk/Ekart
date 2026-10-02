@@ -125,19 +125,19 @@ const AdminProduct = () => {
   }
 
   return (
-    <div className='w-full p-6 flex flex-col gap-6 min-h-screen'>
-      <div className='flex justify-between items-center mb-2'>
-        <div className='relative bg-white rounded shadow-sm border border-[#e0e0e0]'>
+    <div className='w-full p-6 flex min-h-screen flex-col gap-6'>
+      <div className='flex flex-col justify-between gap-3 mb-2 sm:flex-row sm:items-center'>
+        <div className='glass-control relative rounded-xl'>
           <Input type='text'
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search products..."
-            className="w-[400px] pr-10 border-none focus-visible:ring-0 focus-visible:ring-offset-0" />
+            className="w-[min(68vw,400px)] pr-10 border-none focus-visible:ring-0 focus-visible:ring-offset-0" />
           <Search
             className='absolute right-3 top-1/2 -translate-y-1/2 text-[#5c5c6d] size-4' />
         </div>
         <Select onValueChange={(value)=>setSortOrder(value)} >
-          <SelectTrigger className="w-[200px] bg-white">
+          <SelectTrigger className="w-[min(42vw,200px)] bg-white/70">
             <SelectValue placeholder="Sort by price" />
           </SelectTrigger>
           <SelectContent>
@@ -157,28 +157,28 @@ const AdminProduct = () => {
               : '';
 
             return (
-              <Card key={product._id || index} className="overflow-hidden bg-white border border-[#f0f0f0] shadow-ambient hover:shadow-ambient-hover transition-all">
-                <CardContent className="p-4 flex items-center justify-between">
-                  <div className='flex items-center gap-6'>
-                    <div className='w-20 h-20 flex-shrink-0 bg-[#f5f5f7] rounded border border-[#e0e0e0] flex items-center justify-center overflow-hidden'>
+              <Card key={product._id || index} className="glass-surface overflow-hidden border-white/80 shadow-md transition-all hover:shadow-xl">
+                <CardContent className="grid grid-cols-[64px_minmax(0,1fr)] gap-3 p-4 sm:grid-cols-[88px_minmax(0,1fr)_auto] sm:items-center sm:gap-5">
+                  <div className='contents'>
+                    <div className='row-span-2 grid h-16 w-16 flex-shrink-0 place-items-center overflow-hidden rounded-2xl border border-white/80 bg-white/55 sm:row-span-1 sm:h-[88px] sm:w-[88px]'>
                       {displayImg ? (
-                        <img src={displayImg} alt={product.productName} className='w-full h-full object-cover' />
+                        <img src={displayImg} alt={product.productName} className='h-full w-full object-contain p-2' />
                       ) : (
                         <span className='text-xs text-[#5c5c6d] font-body'>No Image</span>
                       )}
                     </div>
-                    <div className='flex flex-col gap-1.5'>
-                      <h3 className='font-display font-semibold text-lg text-[#121212] line-clamp-1 w-80'>{product.productName}</h3>
-                      <p className='text-xs font-mono-label text-[#1a237e] uppercase tracking-wider'>{product.category}</p>
+                    <div className='min-w-0 self-center'>
+                      <h3 className='line-clamp-2 break-words font-display text-sm font-semibold text-slate-900 sm:text-base'>{product.productName}</h3>
+                      <p className='text-xs font-mono-label text-[#173b5c] uppercase tracking-wider'>{product.category}</p>
                     </div>
                   </div>
 
-                  <div className='flex items-center gap-12'>
+                  <div className='col-span-2 flex items-center justify-between gap-3 border-t border-slate-200/70 pt-3 sm:col-span-1 sm:justify-end sm:gap-6 sm:border-0 sm:pt-0'>
                     <h1 className='font-display font-bold text-xl text-[#121212]'>₹{Number(product.productPrice).toLocaleString('en-IN')}</h1>
-                    <div className='flex gap-4'>
+                    <div className='flex items-center gap-3'>
                       <Dialog open={open} onOpenChange={setOpen}>
                         <DialogTrigger asChild>
-                          <Edit onClick={() => { setOpen(true), setEditProduct(product) }} className='text-green-500 cursor-pointer' />
+                          <Edit onClick={() => { setOpen(true), setEditProduct(product) }} className='cursor-pointer rounded-full bg-white/70 p-2 text-[#173b5c] hover:bg-sky-50' />
                         </DialogTrigger>
                         <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-y-auto">
                           <DialogHeader>
@@ -252,7 +252,7 @@ const AdminProduct = () => {
                             <DialogClose asChild>
                               <Button variant="outline" className="border-[#e0e0e0] text-[#121212]">Cancel</Button>
                             </DialogClose>
-                            <Button onClick={handleSave} type="submit" className="bg-[#1a237e] hover:bg-[#0d1759] text-white">Save changes</Button>
+                            <Button onClick={handleSave} type="submit" className="bg-[#173b5c] hover:bg-[#102c47] text-white">Save changes</Button>
                           </DialogFooter>
                         </DialogContent>
                       </Dialog>
@@ -260,9 +260,9 @@ const AdminProduct = () => {
 
                       <Dialog>
                         <DialogTrigger asChild>
-                          <Trash2 className='text-red-500 cursor-pointer' />
+                          <Trash2 className='cursor-pointer rounded-full bg-white/70 p-2 text-red-600 hover:bg-red-50' />
                         </DialogTrigger>
-                        <DialogContent showCloseButton={false} className="sm:max-w-md bg-white">
+                        <DialogContent showCloseButton={false} className="sm:max-w-md glass-surface-strong">
                           <DialogHeader>
                             <DialogTitle>Are you absolutely sure?</DialogTitle>
                             <DialogDescription>
@@ -289,7 +289,7 @@ const AdminProduct = () => {
             )
           })
         ) : (
-          <div className='bg-white rounded-lg p-20 text-center border dashed'>
+          <div className='glass-surface rounded-2xl p-12 text-center border-dashed'>
             <p className='text-gray-500'>No products found in the database.</p>
           </div>
         )}

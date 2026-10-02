@@ -1,34 +1,36 @@
 
-import React from 'react'
+import { lazy, Suspense } from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Navbar from './components/ui/Navbar'
-import Home from './pages/Home'
-import Signup from './pages/Signup'
-import Login from './pages/Login'
-import Verify from './pages/verify'
-import VerifyEmail from './pages/VerifyEmail'
 import Footer from './components/ui/Footer'
-import Profile from './pages/Profile'
-import Products from './pages/Products'
-import Cart from './pages/Cart'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
 import { setCart } from './redux/productsSlice'
 import ProtectedRoute from './components/ui/ProtectedRoute'
-import Dashboard from './pages/Dashboard'
-import AdminSales from './pages/admin/AdminSales'
-import AdminProduct from './pages/admin/AdminProduct'
-import AdminOrders from './pages/admin/AdminOrders'
-import AdminUsers from './pages/admin/AdminUsers'
-import UserInfo from './pages/admin/UserInfo'
-import Addproduct from './pages/admin/Addproduct'
-import ShowUserOrders from './pages/admin/ShowUserOrders'
-import SingleProduct from './pages/SingleProduct'
-import AddressForm from './pages/AddressForm'
-import OrderSuccess from './pages/OrderSuccess'
-import MyOrder from './pages/MyOrder'
 import ErrorPage from './components/ui/ErrorPage'
+import { Skeleton } from './components/ui/skeleton'
+
+const Home = lazy(() => import('./pages/Home'))
+const Signup = lazy(() => import('./pages/Signup'))
+const Login = lazy(() => import('./pages/Login'))
+const Verify = lazy(() => import('./pages/verify'))
+const VerifyEmail = lazy(() => import('./pages/VerifyEmail'))
+const Profile = lazy(() => import('./pages/Profile'))
+const Products = lazy(() => import('./pages/Products'))
+const Cart = lazy(() => import('./pages/Cart'))
+const Dashboard = lazy(() => import('./pages/Dashboard'))
+const AdminSales = lazy(() => import('./pages/admin/AdminSales'))
+const AdminProduct = lazy(() => import('./pages/admin/AdminProduct'))
+const AdminOrders = lazy(() => import('./pages/admin/AdminOrders'))
+const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'))
+const UserInfo = lazy(() => import('./pages/admin/UserInfo'))
+const Addproduct = lazy(() => import('./pages/admin/Addproduct'))
+const ShowUserOrders = lazy(() => import('./pages/admin/ShowUserOrders'))
+const SingleProduct = lazy(() => import('./pages/SingleProduct'))
+const AddressForm = lazy(() => import('./pages/AddressForm'))
+const OrderSuccess = lazy(() => import('./pages/OrderSuccess'))
+const MyOrder = lazy(() => import('./pages/MyOrder'))
 
 const router = createBrowserRouter([
   {
@@ -68,27 +70,27 @@ const router = createBrowserRouter([
   },
   {
     path: '/products/:id',
-    element: <><Navbar /><SingleProduct /></>,
+    element: <><Navbar /><SingleProduct /><Footer /></>,
     errorElement: <ErrorPage />
   },
   {
     path: '/cart',
-    element: <ProtectedRoute><Navbar /><Cart /></ProtectedRoute>,
+    element: <ProtectedRoute><><Navbar /><Cart /><Footer /></></ProtectedRoute>,
     errorElement: <ErrorPage />
   },
   {
     path: '/address',
-    element: <ProtectedRoute><AddressForm /></ProtectedRoute>,
+    element: <ProtectedRoute><><Navbar /><AddressForm /><Footer /></></ProtectedRoute>,
     errorElement: <ErrorPage />
   },
   {
     path: '/order-success',
-    element: <ProtectedRoute><OrderSuccess /></ProtectedRoute>,
+    element: <ProtectedRoute><><Navbar /><OrderSuccess /><Footer /></></ProtectedRoute>,
     errorElement: <ErrorPage />
   },
   {
     path: '/my-orders',
-    element: <ProtectedRoute><Navbar /><MyOrder /></ProtectedRoute>,
+    element: <ProtectedRoute><><Navbar /><MyOrder /><Footer /></></ProtectedRoute>,
     errorElement: <ErrorPage />
   },
 
@@ -131,6 +133,22 @@ const router = createBrowserRouter([
 )
 
 
+const PageFallback = () => (
+  <div className="min-h-screen bg-[#f6f8fb]" role="status" aria-label="Loading page">
+    <div className="flex h-[72px] items-center justify-between border-b border-slate-200 bg-white px-4 sm:px-6">
+      <Skeleton className="h-7 w-20" />
+      <Skeleton className="hidden h-10 w-64 rounded-full sm:block" />
+      <div className="flex items-center gap-3"><Skeleton className="h-9 w-9 rounded-full" /><Skeleton className="h-9 w-20 rounded-xl" /></div>
+    </div>
+    <main className="mx-auto max-w-[1280px] space-y-6 px-4 py-10 sm:px-6">
+      <Skeleton className="h-9 w-56" />
+      <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, index) => <div key={index} className="overflow-hidden rounded-2xl border border-slate-200 bg-white"><Skeleton className="aspect-square w-full rounded-none" /><div className="space-y-3 p-4"><Skeleton className="h-3 w-20" /><Skeleton className="h-5 w-4/5" /><Skeleton className="h-9 w-full" /></div></div>)}
+      </div>
+    </main>
+  </div>
+)
+
 const App = () => {
   const { user } = useSelector(state => state.user)
   const dispatch = useDispatch()
@@ -155,14 +173,15 @@ const App = () => {
       }
     }
     fetchCart()
-  }, [accessToken, dispatch])
+  }, [accessToken, dispatch, user])
 
   return (
     <>
-      <RouterProvider router={router} />
+      <Suspense fallback={<PageFallback />}>
+        <RouterProvider router={router} />
+      </Suspense>
     </>
   )
 }
 
 export default App
-

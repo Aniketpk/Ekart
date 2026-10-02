@@ -34,15 +34,12 @@ export const sendOTPMail = async (email, otp) => {
     const data = await response.json();
 
     if (!response.ok) {
-      console.error("Resend API Error:", data);
       throw new Error(data.message || "Failed to send OTP email");
     }
 
-    console.log("OTP sent successfully:", data);
-
     return data;
   } catch (error) {
-    console.error("Error sending OTP email:", error);
+    console.error("Password reset email delivery failed:", error.name);
     throw error;
   }
 };

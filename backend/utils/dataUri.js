@@ -1,12 +1,8 @@
-import DataUriParser from "datauri/parser.js";
+const getDataUri = (file) => {
+    if (!file?.mimetype?.startsWith("image/") || !Buffer.isBuffer(file.buffer)) {
+        throw new TypeError("A valid image upload is required");
+    }
+    return `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
+};
 
-import path from "path";
-
-const parser = new DataUriParser();
-
-const getDataUri = (file)=>{
-    const extName =path.extname(file.originalname).toString()
-    return parser.format(extName,file.buffer).content
-}
-
-export default getDataUri
+export default getDataUri;

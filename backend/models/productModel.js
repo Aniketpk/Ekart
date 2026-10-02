@@ -14,7 +14,7 @@ const productSchema = new mongoose.Schema({
             public_id: { type: String, required: true }
         }
     ],
-    productPrice: { type: Number },
+    productPrice: { type: Number, min: 0 },
     category: { type: String },
     brand: { type: String }
 

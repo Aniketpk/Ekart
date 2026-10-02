@@ -1,211 +1,63 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
-import { Input } from '@/components/ui/input'
 import { Link, useNavigate } from 'react-router-dom'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Trash2 } from 'lucide-react'
+import { ArrowRight, Minus, PackageOpen, Plus, ShoppingBag, Trash2 } from 'lucide-react'
 import axios from 'axios'
 import { setCart } from '../redux/productsSlice'
 import { toast } from 'sonner'
+import { Skeleton } from '@/components/ui/skeleton'
 
-const Cart = () => {
-    const { cart } = useSelector((store) => store.products)
-    const dispatch = useDispatch()
-    const navigate = useNavigate()
-    const accessToken = localStorage.getItem('accessToken')
+const money = (value) => `₹${Number(value || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 
-    const handleUpdateQuantity = async (productId, type) => {
-        try {
-            const res = await axios.post(`${import.meta.env.VITE_URL}/api/v1/cart/update`, { productId, type }, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`
-                },
-                withCredentials: true
-            })
-            if (res.data.success) {
-                dispatch(setCart(res.data.cart))
-                toast.success(res.data.message)
-            }
-        } catch (error) {
-            console.log(error)
-            toast.error(error.response?.data?.message || "Something went wrong")
-        }
-    }
+export default function Cart() {
+  const { cart } = useSelector((store) => store.products)
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const accessToken = localStorage.getItem('accessToken')
+  const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState(false)
 
-    const loadCart = async ()=>{
-        try {
-            const res = await axios.get(`${import.meta.env.VITE_URL}/api/v1/cart/`,{
-                headers:{
-                    Authorization:`Bearer ${accessToken}`
-                }
-            })
-            if (res.data.success){
-                dispatch(setCart(res.data.cart)) 
-            }
-        } catch (error) {
-          console.log(error);  
-        }
-    }
+  const loadCart = useCallback(async () => {
+    setLoading(true); setLoadError(false)
+    try {
+      const { data } = await axios.get(`${import.meta.env.VITE_URL}/api/v1/cart/`, { headers: { Authorization: `Bearer ${accessToken}` } })
+      if (data.success) dispatch(setCart(data.cart))
+    } catch { setLoadError(true) } finally { setLoading(false) }
+  }, [accessToken, dispatch])
+  useEffect(() => { void loadCart() }, [loadCart])
 
-    const handleRemove = async (productId) => {
-        try {
-            const res = await axios.delete(`${import.meta.env.VITE_URL}/api/v1/cart/remove`, {
-                data: { productId },
-                headers: {
-                    Authorization: `Bearer ${accessToken}`
-                },
-                withCredentials: true
-            })
-            if (res.data.success) {
-                dispatch(setCart(res.data.cart))
-                toast.success(res.data.message)
-            }
-        } catch (error) {
-            console.log(error)
-            toast.error(error.response?.data?.message || "Something went wrong")
-        }
-    }
+  const updateQuantity = async (productId, type) => {
+    try {
+      const { data } = await axios.post(`${import.meta.env.VITE_URL}/api/v1/cart/update`, { productId, type }, { headers: { Authorization: `Bearer ${accessToken}` }, withCredentials: true })
+      if (data.success) { dispatch(setCart(data.cart)); toast.success(data.message) }
+    } catch (error) { toast.error(error.response?.data?.message || 'Something went wrong') }
+  }
+  const removeItem = async (productId) => {
+    try {
+      const { data } = await axios.delete(`${import.meta.env.VITE_URL}/api/v1/cart/remove`, { data: { productId }, headers: { Authorization: `Bearer ${accessToken}` }, withCredentials: true })
+      if (data.success) { dispatch(setCart(data.cart)); toast.success(data.message) }
+    } catch (error) { toast.error(error.response?.data?.message || 'Something went wrong') }
+  }
+  const items = cart?.items || []
+  const subtotal = Number(cart?.totalPrice || 0)
+  const shipping = subtotal > 299 ? 0 : subtotal ? 10 : 0
+  const tax = subtotal * .05
+  const total = subtotal + shipping + tax
+  const quantity = items.reduce((sum, item) => sum + Number(item.quantity || 0), 0)
 
-    useEffect(()=>{
-        loadCart();
-    },[dispatch])
-
-    const subtotal = cart?.totalPrice || 0
-    const shipping = subtotal > 299 ? 0 : 10
-    const tax = subtotal * 0.05 // 5% tax
-    const total = subtotal + shipping + tax
-
-    return (
-        <div className='pt-28 bg-[#fcf9f8] min-h-screen'>
-            {
-                cart?.items?.length > 0 ? (
-                    <div className='max-w-7xl mx-auto px-4'>
-                        <h1 className='text-2xl font-bold text-gray-800 mb-8'>Shopping Cart</h1>
-                        <div className='flex flex-col lg:flex-row gap-8'>
-                            <div className='flex flex-col gap-6 flex-1'>
-                                {cart?.items?.map((product, index) => {
-                                    return (
-                                        <Card key={index} className="overflow-hidden shadow-ambient border-[#f0edec]">
-                                            <div className='flex flex-col sm:flex-row justify-between items-center p-4 gap-4'>
-                                                <div className='flex items-center gap-4 w-full sm:w-auto'>
-                                                    <img
-                                                        src={product?.productId?.productImg?.[0]?.url || ""}
-                                                        alt={product?.productId?.productName}
-                                                        className='w-24 h-24 object-cover rounded-md'
-                                                    />
-                                                    <div className='flex-1'>
-                                                        <h1 className='text-lg font-semibold text-gray-800 line-clamp-1'>{product?.productId?.productName}</h1>
-                                                        <p className="text-[#1a237e] font-medium font-display">₹{product?.productId?.productPrice}</p>
-                                                    </div>
-                                                </div>
-
-                                                <div className='flex gap-4 items-center'>
-                                                    <div className='flex items-center border border-[#e0e0e0] rounded-md'>
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="icon"
-                                                            onClick={() => handleUpdateQuantity(product?.productId?._id, 'decrease')}
-                                                            disabled={product.quantity <= 1}
-                                                        >
-                                                            -
-                                                        </Button>
-                                                        <span className='w-8 text-center'>{product?.quantity}</span>
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="icon"
-                                                            onClick={() => handleUpdateQuantity(product?.productId?._id, 'increase')}
-                                                        >
-                                                            +
-                                                        </Button>
-                                                    </div>
-                                                </div>
-
-                                                <p className="font-semibold text-gray-800 w-24 text-center">
-                                                    ₹{(product?.productId?.productPrice) * (product?.quantity)}
-                                                </p>
-
-                                                <Button
-                                                    variant="ghost"
-                                                    onClick={() => handleRemove(product?.productId?._id)}
-                                                    className='text-red-500 hover:text-red-600 hover:bg-red-50 gap-1'
-                                                >
-                                                    <Trash2 className='w-4 h-4' />
-                                                    <span className="hidden sm:inline">Remove</span>
-                                                </Button>
-                                            </div>
-                                        </Card>
-                                    )
-                                })}
-                            </div>
-
-                            <div className='w-full lg:w-[400px]'>
-                                <Card className="shadow-ambient border-[#f0edec]">
-                                    <CardHeader>
-                                        <CardTitle>Order Summary</CardTitle>
-                                    </CardHeader>
-                                    <CardContent className='space-y-4'>
-                                        <div className='flex justify-between' >
-                                            <span>Subtotal ({cart?.items?.length} items)</span>
-                                            <span>₹{cart?.totalPrice.toLocaleString('en-IN')}</span>
-                                        </div>
-                                        <div className='flex justify-between'>
-                                            <span>Shipping</span>
-                                            <span className={shipping === 0 ? "text-green-600 font-medium" : ""}>
-                                                {shipping === 0 ? "Free" : `₹${shipping}`}
-                                            </span>
-                                        </div>
-                                        <div className='flex justify-between'>
-                                            <span>Tax (5%)</span>
-                                            <span>₹{tax.toFixed(2)}</span>
-                                        </div>
-                                        <Separator />
-                                        <div className='flex justify-between font-bold text-lg'>
-                                            <span>Total</span>
-                                            <span className="text-[#1a237e] font-display font-bold">₹{total.toFixed(2)}</span>
-                                        </div>
-                                        <div className='space-y-3 pt-4'>
-                                            <div className='flex space-x-2'>
-                                                <Input placeholder='Promo code' className="bg-white" />
-                                                <Button variant="outline">Apply</Button>
-                                            </div>
-                                            <Button onClick={() => navigate('/address')} className='w-full bg-[#1a237e] text-white hover:bg-[#0d1759] h-11'>
-                                                Place Order
-                                            </Button>
-                                            <Link to="/products" className="block">
-                                                <Button variant="outline" className="w-full">
-                                                    Continue Shopping
-                                                </Button>
-                                            </Link>
-                                        </div>
-                                        <div className='text-xs text-muted-foreground pt-4 space-y-1'>
-                                            <p>• Free shipping on orders above ₹299</p>
-                                            <p>• 10-days return policy</p>
-                                            <p>• Secure Checkout with SSL encryption</p>
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            </div>
-                        </div>
-                    </div>
-                ) : (
-                    <div className='flex flex-col items-center justify-center py-24 text-center px-4'>
-                        <div className="bg-[#f5f5f7] p-6 rounded-full mb-6 border border-[#e0e0e0]">
-                            <Trash2 className="w-12 h-12 text-[#5c5c6d]" />
-                        </div>
-                        <h2 className='text-2xl font-bold text-gray-800 mb-2'>Your cart is empty</h2>
-                        <p className="text-gray-500 mb-8 max-w-sm">Looks like you haven't added anything to your cart yet. Check out our latest products!</p>
-                        <Link to="/products">
-                            <Button className="bg-[#1a237e] hover:bg-[#0d1759] text-white px-8 py-6 text-lg rounded-full shadow-sm hover:shadow-ambient">
-                                Start Shopping
-                            </Button>
-                        </Link>
-                    </div>
-                )
-            }
-        </div>
-    )
+  return <main className="min-h-screen bg-transparent px-4 pb-16 pt-28 sm:px-6 sm:pt-32"><div className="mx-auto max-w-[1240px]">
+    <header className="mb-8 flex flex-wrap items-end justify-between gap-4"><div><p className="font-mono-label mb-2 text-[#426a8c]">Your selection</p><h1 className="font-display text-4xl font-semibold tracking-[-.04em] text-slate-950 sm:text-5xl">Shopping bag<span className="ml-3 align-middle font-body text-base font-medium tracking-normal text-slate-500">{loading ? '' : quantity}</span></h1><p className="mt-3 text-sm text-slate-600">Review items before continuing to checkout.</p></div><Link to="/products" className="hidden rounded-full px-4 py-2 text-sm font-semibold text-[#173b5c] hover:bg-white/70 sm:inline-flex">Continue browsing <ArrowRight size={15} className="ml-2"/></Link></header>
+    {loading ? <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]"><div className="space-y-4">{[1,2].map((item)=><Skeleton key={item} className="h-48 rounded-3xl"/>)}</div><Skeleton className="h-80 rounded-3xl"/></div>
+      : loadError ? <div className="glass-surface-strong rounded-[2rem] px-6 py-16 text-center"><PackageOpen className="mx-auto mb-4 text-slate-400"/><h2 className="font-display text-xl font-semibold text-slate-900">Your cart didn’t load.</h2><p className="mt-2 text-sm text-slate-600">Try again to retrieve your latest items.</p><button onClick={() => void loadCart()} className="mt-5 rounded-full bg-[#173b5c] px-6 py-3 text-sm font-semibold text-white">Try again</button></div>
+      : items.length ? <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-8">
+        <section aria-label="Cart items" className="space-y-4">{items.map((item,index)=>{const product=item.productId;return <article key={product?._id || index} className="glass-surface group grid gap-4 rounded-[1.65rem] p-4 sm:grid-cols-[128px_minmax(0,1fr)_auto] sm:items-center sm:gap-6 sm:p-5">
+          <Link to={product?._id ? `/products/${product._id}` : '/products'} className="relative grid aspect-[1.2] w-full place-items-center overflow-hidden rounded-[1.2rem] bg-[radial-gradient(ellipse,rgba(216,229,239,.74),rgba(246,248,250,.8)_72%)] sm:aspect-square sm:w-32"><img src={product?.productImg?.[0]?.url || '/Ekart.png'} alt={product?.productName || 'E-Kart product'} className="h-full w-full object-contain p-3 transition-transform duration-300 group-hover:scale-[1.04]"/></Link>
+          <div className="min-w-0"><p className="font-mono-label text-[10px] text-slate-500">{product?.brand || product?.category || 'E-Kart'}</p><Link to={product?._id ? `/products/${product._id}` : '/products'} className="mt-1 block line-clamp-2 font-display text-lg font-semibold text-slate-950 hover:text-[#173b5c]">{product?.productName || 'Product details unavailable'}</Link><p className="mt-2 text-sm text-slate-600">{money(product?.productPrice ?? item.price)} <span className="text-slate-400">each</span></p>
+          <div className="mt-4 flex flex-wrap items-center gap-3"><div className="glass-control inline-flex h-10 items-center rounded-full p-1"><button type="button" aria-label="Decrease quantity" onClick={()=>updateQuantity(product?._id,'decrease')} disabled={item.quantity<=1} className="grid h-8 w-8 place-items-center rounded-full text-slate-600 transition hover:bg-white disabled:opacity-40"><Minus size={14}/></button><span className="w-8 text-center text-sm font-semibold text-slate-800">{item.quantity}</span><button type="button" aria-label="Increase quantity" onClick={()=>updateQuantity(product?._id,'increase')} disabled={item.quantity>=99} className="grid h-8 w-8 place-items-center rounded-full text-slate-600 transition hover:bg-white disabled:opacity-40"><Plus size={14}/></button></div><button type="button" onClick={()=>removeItem(product?._id)} className="inline-flex min-h-10 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-slate-500 transition hover:bg-red-50 hover:text-red-700"><Trash2 size={14}/>Remove</button></div>
+          </div><div className="flex items-center justify-between border-t border-slate-200/70 pt-3 sm:block sm:border-0 sm:pt-0 sm:text-right"><span className="text-xs font-medium uppercase tracking-wider text-slate-500 sm:hidden">Item total</span><span className="font-display text-lg font-semibold text-slate-950">{money((product?.productPrice ?? item.price) * item.quantity)}</span></div>
+        </article>})}</section>
+        <aside className="glass-surface-strong rounded-[1.75rem] p-5 shadow-xl sm:p-6 lg:sticky lg:top-28"><p className="font-mono-label text-[#426a8c]">At a glance</p><h2 className="mt-2 font-display text-2xl font-semibold text-slate-950">Order summary</h2><div className="mt-6 space-y-4 border-b border-slate-200/80 pb-5 text-sm"><div className="flex justify-between text-slate-600"><span>Subtotal · {quantity} items</span><span>{money(subtotal)}</span></div><div className="flex justify-between text-slate-600"><span>Shipping</span><span>{shipping ? money(shipping) : 'Free'}</span></div><div className="flex justify-between text-slate-600"><span>Estimated tax</span><span>{money(tax)}</span></div></div><div className="flex justify-between gap-4 py-5 text-base font-semibold text-slate-950"><span>Estimated total</span><span className="font-display text-xl">{money(total)}</span></div><p className="-mt-2 mb-5 text-xs leading-5 text-slate-500">Final pricing is calculated by the checkout service.</p><button onClick={()=>navigate('/address')} className="flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[#173b5c] px-5 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-[#102c47]">Continue to checkout <ArrowRight size={16}/></button><Link to="/products" className="mt-3 flex min-h-11 items-center justify-center rounded-full border border-slate-200 bg-white/50 text-sm font-semibold text-slate-700 transition hover:bg-white">Continue shopping</Link></aside>
+      </div>
+      : <div className="glass-surface-strong rounded-[2rem] px-6 py-16 text-center sm:py-24"><span className="mx-auto grid h-16 w-16 place-items-center rounded-[1.4rem] bg-white/75 text-[#426a8c] shadow-sm"><ShoppingBag size={27}/></span><p className="mt-5 font-mono-label text-slate-500">Nothing here yet</p><h2 className="mt-2 font-display text-2xl font-semibold text-slate-950">Your bag is waiting.</h2><p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-slate-600">Browse the E-Kart catalog and add products to see them here.</p><Link to="/products" className="mt-6 inline-flex min-h-12 items-center justify-center rounded-full bg-[#173b5c] px-6 text-sm font-semibold text-white shadow-md hover:bg-[#102c47]">Explore products</Link></div>}
+  </div></main>
 }
-
-export default Cart

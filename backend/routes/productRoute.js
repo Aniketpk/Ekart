@@ -6,10 +6,10 @@ import { multipleUpload } from '../middleware/multer.js'
 
 const router = express.Router()
 
-router.post('/add', multipleUpload, isAuthenticated, isAdmin, addProduct)
+router.post('/add', isAuthenticated, isAdmin, multipleUpload, addProduct)
 router.get('/getallproducts', getAllProduct)
 router.delete('/delete/:productId', isAuthenticated, isAdmin, deleteProduct)
-router.put('/update/:productId', multipleUpload, isAuthenticated, isAdmin, updateProduct)
+router.put('/update/:productId', isAuthenticated, isAdmin, multipleUpload, updateProduct)
 
 
 export default router

@@ -24,7 +24,7 @@ const tabsListVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-white border border-[#e0e0e0] shadow-sm rounded-full",
+        default: "glass-control rounded-full",
         line: "gap-1 bg-transparent",
       },
     },
@@ -56,8 +56,8 @@ function TabsTrigger({
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
       className={cn(
-        "focus-visible:ring-[#1a237e] focus-visible:outline-none text-[#5c5c6d] hover:text-[#121212] relative inline-flex h-full flex-1 items-center justify-center rounded-full px-6 py-2 text-sm font-display font-semibold whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50",
-        "data-[state=active]:bg-[#1a237e] data-[state=active]:text-white data-[state=active]:shadow-sm",
+        "focus-visible:ring-[#173b5c] focus-visible:outline-none text-[#5c5c6d] hover:text-[#121212] relative inline-flex h-full flex-1 items-center justify-center rounded-full px-6 py-2 text-sm font-display font-semibold whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50",
+        "data-[state=active]:bg-[#173b5c] data-[state=active]:text-white data-[state=active]:shadow-md",
         className
       )}
       {...props} />
@@ -76,4 +76,4 @@ function TabsContent({
   );
 }
 
-export { Tabs, TabsList, TabsTrigger, TabsContent, tabsListVariants }
+export { Tabs, TabsList, TabsTrigger, TabsContent }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import FilterSidebar from '../components/ui/FilterSidebar'
 import { useDispatch, useSelector } from 'react-redux'
@@ -12,10 +12,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { toast } from 'sonner'
 import axios from 'axios'
 import Footer from '../components/ui/Footer'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, PackageSearch } from 'lucide-react'
 
 const ITEMS_PER_PAGE = 12
 
@@ -24,6 +23,7 @@ const Products = () => {
     const { products } = useSelector(store => store.products)
     const [allProducts, setAllProducts] = useState([])
     const [loading, setLoading] = useState(false)
+    const [loadError, setLoadError] = useState(false)
     const [search, setSearch] = useState(searchParams.get('search') || "")
     const [category, setCategory] = useState(searchParams.get('category') || "All")
     const [brand, setBrand] = useState("All")
@@ -32,9 +32,10 @@ const Products = () => {
     const [currentPage, setCurrentPage] = useState(1)
     const dispatch = useDispatch()
 
-    const getAllProducts = async () => {
+    const getAllProducts = useCallback(async () => {
         try {
             setLoading(true)
+            setLoadError(false)
             const response = await axios.get(`${import.meta.env.VITE_URL}/api/v1/product/getallproducts`)
             if (response.data.success) {
                 setAllProducts(response.data.products)
@@ -42,15 +43,15 @@ const Products = () => {
             }
         } catch (error) {
             console.log(error);
-            toast.error("Failed to fetch products")
+            setLoadError(true)
 
         } finally {
             setLoading(false)
         }
-    }
+    }, [dispatch])
     useEffect(() => {
         getAllProducts()
-    }, [])
+    }, [getAllProducts])
 
     useEffect(() => {
         if (allProducts.length === 0) return
@@ -107,102 +108,44 @@ const Products = () => {
         return pages
     }
 
+    const categories = [...new Set(allProducts.map((item) => item.category).filter(Boolean))]
+
     return (
         <>
-        <div className='pt-24 pb-12 bg-[#f5f5f7] min-h-screen'>
-            <div className='max-w-[1280px] mx-auto px-6 flex flex-col md:flex-row gap-8'>
-                {/* Filter Sidebar */}
-                <FilterSidebar
-                    search={search}
-                    setSearch={setSearch}
-                    category={category}
-                    setCategory={setCategory}
-                    brand={brand}
-                    setBrand={setBrand}
-                    allProducts={allProducts}
-                    priceRange={priceRange}
-                    setPriceRange={setPriceRange} />
-                {/* Products */}
-                <div className='flex flex-col flex-1'>
-                    {/* Header: count + sort */}
-                    <div className='flex items-center justify-between mb-6'>
-                        <p className='text-sm font-body text-[#5c5c6d]'>
-                            Showing <span className='font-semibold text-[#121212]'>{paginatedProducts.length}</span> of <span className='font-semibold text-[#121212]'>{totalProducts}</span> products
-                        </p>
-                        <div className='flex items-center gap-2'>
-                            <span className='text-sm text-[#5c5c6d] font-body hidden sm:inline'>Sort by</span>
-                            <Select onValueChange={(value) => setSortOrder(value)}>
-                                <SelectTrigger className="w-[160px] bg-white border-[#e0e0e0] focus:ring-[#1a237e] text-sm">
-                                    <SelectValue placeholder="Featured" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        <SelectItem value="lowTohigh">Price: Low to High</SelectItem>
-                                        <SelectItem value="highTolow">Price: High to Low</SelectItem>
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                    </div>
-                    {/* Products Grid — 3 columns */}
-                    <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
-                        {
-                            loading ? (
-                                Array.from({ length: 6 }).map((_, idx) => (
-                                    <ProductCard key={`skeleton-${idx}`} loading={true} />
-                                ))
-                            ) : paginatedProducts.length > 0 ? (
-                                paginatedProducts.map((product) => (
-                                    <ProductCard key={product._id} product={product} loading={false} />
-                                ))
-                            ) : (
-                                <div className="col-span-full py-16 text-center text-gray-500 font-body">
-                                    No products found.
-                                </div>
-                            )
-                        }
-                    </div>
-
-                    {/* Pagination */}
-                    {totalPages > 1 && (
-                        <div className='flex items-center justify-center gap-1.5 mt-10'>
-                            <button
-                                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                                disabled={currentPage === 1}
-                                className='w-9 h-9 flex items-center justify-center rounded border border-[#e0e0e0] bg-white text-[#5c5c6d] hover:bg-[#f5f5f7] disabled:opacity-40 disabled:cursor-not-allowed transition-colors'
-                            >
-                                <ChevronLeft className='w-4 h-4' />
-                            </button>
-                            {getPageNumbers().map((page, i) => (
-                                page === '...' ? (
-                                    <span key={`dots-${i}`} className='w-9 h-9 flex items-center justify-center text-sm text-[#5c5c6d]'>…</span>
-                                ) : (
-                                    <button
-                                        key={page}
-                                        onClick={() => setCurrentPage(page)}
-                                        className={`w-9 h-9 flex items-center justify-center rounded text-sm font-medium transition-colors ${
-                                            currentPage === page
-                                                ? 'bg-[#1a237e] text-white'
-                                                : 'border border-[#e0e0e0] bg-white text-[#121212] hover:bg-[#f5f5f7]'
-                                        }`}
-                                    >
-                                        {page}
-                                    </button>
-                                )
-                            ))}
-                            <button
-                                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                                disabled={currentPage === totalPages}
-                                className='w-9 h-9 flex items-center justify-center rounded border border-[#e0e0e0] bg-white text-[#5c5c6d] hover:bg-[#f5f5f7] disabled:opacity-40 disabled:cursor-not-allowed transition-colors'
-                            >
-                                <ChevronRight className='w-4 h-4' />
-                            </button>
-                        </div>
-                    )}
-                </div>
-
+        <main className="min-h-screen bg-transparent pb-16 pt-28 sm:pt-32">
+          <div className="mx-auto max-w-[1240px] px-4 sm:px-6">
+            <div className="mb-7 sm:mb-10">
+              <p className="font-mono-label mb-2 text-[#173b5c]">The E-Kart collection</p>
+              <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
+                <div><h1 className="font-display text-4xl font-semibold tracking-[-.04em] text-slate-950 sm:text-5xl">Find your next essential.</h1><p className="mt-3 max-w-xl text-sm leading-6 text-slate-600 sm:text-base">Explore products listed in the E-Kart catalog and narrow the collection to what you need.</p></div>
+                <span className="text-sm text-slate-500">{totalProducts} {totalProducts === 1 ? 'product' : 'products'} listed</span>
+              </div>
             </div>
-        </div>
+
+            <div className="glass-surface-strong mb-7 rounded-[1.5rem] p-3 sm:p-4">
+              <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
+                <label className="glass-control flex min-h-12 items-center gap-3 rounded-full px-4 text-slate-500"><span aria-hidden="true">⌕</span><input type="search" aria-label="Search products" placeholder="Search by product name" value={search} onChange={(event) => setSearch(event.target.value)} className="!w-full !border-0 !bg-transparent !p-0 text-sm !shadow-none outline-none placeholder:text-slate-500" /></label>
+                <div className="flex items-center gap-2"><span className="hidden text-xs font-medium uppercase tracking-wider text-slate-500 sm:block">Sort</span><Select value={sortOrder || 'featured'} onValueChange={(value) => setSortOrder(value === 'featured' ? '' : value)}><SelectTrigger className="glass-control h-12 w-full rounded-full border-white/80 bg-white/55 px-4 text-sm sm:w-[190px]"><SelectValue placeholder="Featured" /></SelectTrigger><SelectContent><SelectGroup><SelectItem value="featured">Featured</SelectItem><SelectItem value="lowTohigh">Price: Low to High</SelectItem><SelectItem value="highTolow">Price: High to Low</SelectItem></SelectGroup></SelectContent></Select></div>
+              </div>
+              <div id="catalog-categories" className="mt-3 flex scroll-mt-28 items-center gap-2 overflow-x-auto pb-1" aria-label="Filter by category">
+                {[['All', 'All products'], ...categories.map((name) => [name, name])].map(([value, label]) => <button key={value} type="button" onClick={() => setCategory(value)} aria-pressed={category === value} className={`min-h-10 shrink-0 rounded-full border px-4 text-xs font-semibold transition ${category === value ? 'border-[#173b5c] bg-[#173b5c] text-white shadow-md' : 'glass-control text-slate-600 hover:text-[#173b5c]'}`}>{label}</button>)}
+                <details className="relative ml-auto shrink-0">
+                  <summary className="glass-control flex min-h-10 cursor-pointer list-none items-center rounded-full px-4 text-xs font-semibold text-slate-700">More filters</summary>
+                  <div className="glass-surface-strong absolute right-0 top-12 z-20 w-[min(86vw,360px)] rounded-2xl p-4 shadow-2xl sm:p-5"><FilterSidebar className="grid gap-4" search={search} setSearch={setSearch} category={category} setCategory={setCategory} brand={brand} setBrand={setBrand} allProducts={allProducts} priceRange={priceRange} setPriceRange={setPriceRange} /></div>
+                </details>
+              </div>
+            </div>
+
+            <div className="mb-4 flex items-center justify-between gap-3"><p className="text-sm text-slate-600">Showing <strong className="text-slate-900">{paginatedProducts.length}</strong> of {totalProducts}</p>{(category !== 'All' || brand !== 'All' || search || priceRange[0] > 0 || priceRange[1] < 999999) && <button onClick={() => { setSearch(''); setCategory('All'); setBrand('All'); setPriceRange([0, 999999]) }} className="text-xs font-semibold text-[#173b5c] hover:underline">Clear filters</button>}</div>
+            <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
+              {loading ? Array.from({ length: 8 }).map((_, index) => <ProductCard key={`skeleton-${index}`} loading />)
+                : loadError ? <div className="glass-surface col-span-full rounded-2xl px-6 py-16 text-center"><p className="font-semibold text-slate-900">The catalog could not be loaded.</p><p className="mt-1 text-sm text-slate-600">Check the connection and try again.</p><button onClick={() => void getAllProducts()} className="mt-5 rounded-full bg-[#173b5c] px-5 py-2.5 text-sm font-semibold text-white">Retry</button></div>
+                : paginatedProducts.length ? paginatedProducts.map((product) => <ProductCard key={product._id} product={product} />)
+                : <div className="glass-surface col-span-full rounded-2xl border-dashed px-6 py-16 text-center"><PackageSearch className="mx-auto mb-3 text-slate-400"/><p className="font-semibold text-slate-900">No products match those filters.</p><p className="mt-1 text-sm text-slate-600">Try another category or search term.</p><button onClick={() => { setSearch(''); setCategory('All'); setBrand('All'); setPriceRange([0, 999999]) }} className="mt-4 text-sm font-semibold text-[#173b5c]">Clear filters</button></div>}
+            </div>
+            {totalPages > 1 && <nav aria-label="Product pages" className="glass-surface mx-auto mt-10 flex w-fit items-center gap-1 rounded-full p-1.5"><button type="button" aria-label="Previous page" onClick={() => setCurrentPage((page) => Math.max(1, page - 1))} disabled={currentPage === 1} className="grid h-9 w-9 place-items-center rounded-full text-slate-600 hover:bg-white/80 disabled:opacity-35"><ChevronLeft size={17}/></button>{getPageNumbers().map((page,index)=>page === '...' ? <span key={`dots-${index}`} className="px-2 text-slate-400">…</span> : <button type="button" key={page} onClick={() => setCurrentPage(page)} aria-current={currentPage === page ? 'page' : undefined} className={`h-9 min-w-9 rounded-full px-2 text-sm font-semibold ${currentPage === page ? 'bg-[#173b5c] text-white' : 'text-slate-600 hover:bg-white/80'}`}>{page}</button>)}<button type="button" aria-label="Next page" onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))} disabled={currentPage === totalPages} className="grid h-9 w-9 place-items-center rounded-full text-slate-600 hover:bg-white/80 disabled:opacity-35"><ChevronRight size={17}/></button></nav>}
+          </div>
+        </main>
         <Footer />
         </>
     )

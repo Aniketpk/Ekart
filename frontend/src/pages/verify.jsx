@@ -1,15 +1,17 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 const Verify = () => {
     return (
-        <div className='min-h-screen flex items-center justify-center bg-[#fcf9f8] px-4'>
-            <div className='bg-white p-10 rounded-xl shadow-ambient border border-[#f0edec] w-full max-w-md text-center'>
-                <h2 className='font-display text-2xl font-semibold text-[#1a237e] mb-4'>Check Your Email</h2>
-                <p className='font-body text-[#454652] text-sm'>
+        <main className='flex min-h-screen items-center justify-center bg-transparent px-4 py-10'>
+            <div className='w-full max-w-md glass-surface-strong rounded-[2rem] p-7 text-center shadow-xl sm:p-10'>
+                <Link to="/" className="mb-4 inline-flex font-display text-lg font-bold text-[#173b5c]">E-Kart</Link>
+                <h1 className='mb-3 font-display text-2xl font-semibold text-slate-950'>Check your email</h1>
+                <p className='text-sm leading-6 text-slate-600'>
                     We've sent a verification code to your email address. Please check your inbox and click the verification link.
                 </p>
             </div>
-        </div>
+        </main>
     )
 }
 

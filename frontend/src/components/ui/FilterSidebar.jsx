@@ -2,7 +2,7 @@ import React from 'react'
 import { Input } from './input'
 import { Button } from './button'
 
-const FilterSidebar = ({ search, setSearch, category, setCategory, brand, setBrand, setPriceRange, allProducts, priceRange }) => {
+const FilterSidebar = ({ search = '', setSearch, category, setCategory, brand, setBrand, setPriceRange, allProducts, priceRange, className }) => {
     const Category = allProducts.map((p) => p.category)
     const UniqueCategory = ["All Products", ...new Set(Category)]
 
@@ -40,9 +40,14 @@ const FilterSidebar = ({ search, setSearch, category, setCategory, brand, setBra
     }
 
     return (
-        <div className='bg-white border border-[#f0f0f0] mt-1 p-6 rounded-lg shadow-ambient h-max hidden md:block w-64 flex-shrink-0'>
+        <div className={className || 'glass-surface-strong mt-1 h-max w-64 flex-shrink-0 rounded-2xl p-6 hidden md:block'}>
             {/* Filters heading */}
             <h2 className='font-display font-bold text-lg text-[#121212] mb-6'>Filters</h2>
+
+            <label className="mb-6 grid gap-2 text-xs font-semibold uppercase tracking-wider text-slate-600">
+                Search products
+                <Input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search by name" className="h-10 rounded-xl bg-white text-sm font-normal normal-case tracking-normal" />
+            </label>
 
             {/* Category */}
             <h3 className='font-display font-semibold text-[#121212] text-xs uppercase tracking-wider mb-3'>Category</h3>
@@ -52,7 +57,7 @@ const FilterSidebar = ({ search, setSearch, category, setCategory, brand, setBra
                         <label key={index} className='flex items-center gap-3 cursor-pointer group'>
                             <input
                                 type="checkbox"
-                                className="w-4 h-4 accent-[#1a237e] rounded cursor-pointer"
+                                className="w-4 h-4 accent-[#173b5c] rounded cursor-pointer"
                                 checked={isSelected(items)}
                                 onChange={() => handleCategoryClick(items)}
                             />
@@ -65,7 +70,7 @@ const FilterSidebar = ({ search, setSearch, category, setCategory, brand, setBra
             {/* Brand */}
             <h3 className='mt-7 font-display font-semibold text-[#121212] text-xs uppercase tracking-wider mb-3'>Brand</h3>
             <select
-                className='bg-[#f5f5f7] p-2.5 rounded border border-[#e0e0e0] w-full text-sm font-body focus:outline-none focus:ring-2 focus:ring-[#1a237e] focus:border-transparent'
+                className='bg-[#f5f5f7] p-2.5 rounded border border-[#e0e0e0] w-full text-sm font-body focus:outline-none focus:ring-2 focus:ring-[#173b5c] focus:border-transparent'
                 value={brand === "All" ? "All Brands" : brand}
                 onChange={handleBrandChange}
             >
@@ -87,7 +92,7 @@ const FilterSidebar = ({ search, setSearch, category, setCategory, brand, setBra
                         max="5000"
                         value={priceRange[0]}
                         onChange={handleMinChange}
-                        className='w-full p-2 text-sm border border-[#e0e0e0] rounded bg-[#f5f5f7] focus:outline-none focus:border-[#1a237e] font-body'
+                        className='w-full p-2 text-sm border border-[#e0e0e0] rounded bg-[#f5f5f7] focus:outline-none focus:border-[#173b5c] font-body'
                     />
                 </div>
                 <span className="text-[#5c5c6d] text-sm mt-5">-</span>
@@ -99,13 +104,13 @@ const FilterSidebar = ({ search, setSearch, category, setCategory, brand, setBra
                         max="999999"
                         value={priceRange[1]}
                         onChange={handleMaxChange}
-                        className='w-full p-2 text-sm border border-[#e0e0e0] rounded bg-[#f5f5f7] focus:outline-none focus:border-[#1a237e] font-body'
+                        className='w-full p-2 text-sm border border-[#e0e0e0] rounded bg-[#f5f5f7] focus:outline-none focus:border-[#173b5c] font-body'
                     />
                 </div>
             </div>
 
             {/* Reset button */}
-            <Button onClick={resetFilter} className='mt-8 w-full bg-[#1a237e] hover:bg-[#0d1759] text-white p-2.5 rounded font-medium transition-colors cursor-pointer'>Reset Filters</Button>
+            <Button onClick={resetFilter} className='mt-8 w-full bg-[#173b5c] hover:bg-[#102c47] text-white p-2.5 rounded font-medium transition-colors cursor-pointer'>Reset Filters</Button>
         </div>
     )
 }

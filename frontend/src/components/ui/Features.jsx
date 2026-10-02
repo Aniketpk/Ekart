@@ -1,37 +1,37 @@
 import React from 'react'
-import { Headphones, Truck, Shield, RefreshCw } from 'lucide-react'
+import { CreditCard, PackageSearch, MapPin, ClipboardList } from 'lucide-react'
 
 export const Features = () => {
     const features = [
         {
-            icon: <Truck className='w-5 h-5 text-[#1a237e]' />,
-            title: "Free Shipping",
-            description: "On all orders over ₹500"
+            icon: <PackageSearch className='w-5 h-5 text-[#173b5c]' />,
+            title: "Browse the catalog",
+            description: "Explore the products listed in E-Kart."
         },
         {
-            icon: <Shield className='w-5 h-5 text-[#1a237e]' />,
-            title: "Secure Payment",
-            description: "100% secure transactions"
+            icon: <CreditCard className='w-5 h-5 text-[#173b5c]' />,
+            title: "Protected payment",
+            description: "Checkout payments are verified before orders are confirmed."
         },
         {
-            icon: <RefreshCw className='w-5 h-5 text-[#1a237e]' />,
-            title: "30 Days Return",
-            description: "Hassle-free return policy"
+            icon: <ClipboardList className='w-5 h-5 text-[#173b5c]' />,
+            title: "Order history",
+            description: "Review your orders from your account."
         },
         {
-            icon: <Headphones className='w-5 h-5 text-[#1a237e]' />,
-            title: "24/7 Support",
-            description: "Expert support team"
+            icon: <MapPin className='w-5 h-5 text-[#173b5c]' />,
+            title: "Delivery details",
+            description: "Add a delivery address during checkout."
         }
     ]
 
     return (
-        <section className='py-20 bg-[#f5f5f7]'>
-            <div className='max-w-[1280px] mx-auto px-6'>
+        <section className='bg-transparent px-4 py-10 sm:px-6 sm:py-14'>
+            <div className='mx-auto max-w-[1280px]'>
                 <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
                     {features.map((feature, index) => (
-                        <div key={index} className='flex flex-col items-center text-center p-8 bg-white rounded-lg border border-[#f0f0f0] shadow-ambient hover:shadow-ambient-hover transition-all duration-300 hover:-translate-y-1'>
-                            <div className='w-12 h-12 bg-[#e0e0ff] rounded-lg flex items-center justify-center mb-5'>
+                        <div key={index} className='flex flex-col items-center text-center glass-surface rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:p-7'>
+                            <div className='mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/90 bg-white/70 shadow-inner'>
                                 {feature.icon}
                             </div>
                             <h3 className='font-display text-base font-semibold text-[#121212] mb-1.5'>{feature.title}</h3>

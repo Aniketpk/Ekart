@@ -47,9 +47,9 @@ const AdminOrders = () => {
       {orders.length === 0 ? (
         <p className="text-gray-500">No orders found</p>
       ) : (
-        <div className="overflow-x-auto bg-white shadow-ambient rounded-lg border border-[#f0edec] p-4">
+        <div className="glass-surface-strong overflow-x-auto rounded-2xl border-white/80 p-4">
           <table className="w-full text-left text-sm">
-            <thead className="bg-[#fcf9f8] border-b border-[#f0edec]">
+            <thead className="bg-slate-100/65 border-b border-white/80">
               <tr>
                 <th className="px-4 py-3 font-display font-semibold text-[#121212]">Order ID</th>
                 <th className="px-4 py-3 font-display font-semibold text-[#121212]">User</th>
@@ -64,9 +64,9 @@ const AdminOrders = () => {
               {orders.map((order) => (
                 <tr
                   key={order._id}
-                  className="border-b hover:bg-gray-50"
+                  className="border-b border-white/60 hover:bg-white/40"
                 >
-                  <td className="px-4 py-3 font-mono-label font-bold text-[#1a237e] border-b border-[#f0f0f0]">
+                  <td className="px-4 py-3 font-mono-label font-bold text-[#173b5c] border-b border-[#f0f0f0]">
                     {order._id}
                   </td>
 
@@ -93,7 +93,7 @@ const AdminOrders = () => {
                     ))}
                   </td>
 
-                  <td className="px-4 py-3 border-b border-[#f0f0f0] font-display font-bold text-[#1a237e]">
+                  <td className="px-4 py-3 border-b border-[#f0f0f0] font-display font-bold text-[#173b5c]">
                     ₹{order.amount?.toLocaleString("en-IN")}
                   </td>
 

@@ -7,10 +7,11 @@ export const addProduct = async (req, res) => {
         const { productName, productDesc, productPrice, category, brand } = req.body;
         const userId = req.id;
 
-        if (!productName || !productDesc || !productPrice || !category || !brand) {
+        const parsedPrice = Number(productPrice);
+        if (!productName?.trim() || !productDesc?.trim() || !category?.trim() || !brand?.trim() || !Number.isFinite(parsedPrice) || parsedPrice < 0) {
             return res.status(400).json({
                 success: false,
-                message: "All fields are required"
+                message: "Provide product details and a valid non-negative price"
             })
         }
         //Handle multiple image upload
@@ -31,7 +32,7 @@ export const addProduct = async (req, res) => {
         const newProduct = await ProductModel.create({
             productName,
             productDesc,
-            productPrice,
+            productPrice: parsedPrice,
             category,
             brand,
             productImg,
@@ -45,7 +46,7 @@ export const addProduct = async (req, res) => {
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message: error.message
+            message: "The request could not be completed"
         })
     }
 }
@@ -67,7 +68,7 @@ export const getAllProduct = async (_, res) => {
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message: error.message
+            message: "The request could not be completed"
         })
     }
 }
@@ -98,7 +99,7 @@ export const deleteProduct = async (req, res) => {
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message: error.message
+            message: "The request could not be completed"
         })
     }
 }
@@ -107,6 +108,9 @@ export const updateProduct = async (req, res) => {
     try {
         const { productId } = req.params;
         const { productName, productDesc, productPrice, category, brand, existImages } = req.body;
+        if (productPrice !== undefined && (!Number.isFinite(Number(productPrice)) || Number(productPrice) < 0)) {
+            return res.status(422).json({ success: false, message: "Product price must be a valid non-negative number" });
+        }
         const product = await ProductModel.findById(productId);
         if (!product) {
             return res.status(404).json({
@@ -147,7 +151,7 @@ export const updateProduct = async (req, res) => {
         //update product details
         product.productName = productName || product.productName;
         product.productDesc = productDesc || product.productDesc;
-        product.productPrice = productPrice || product.productPrice;
+        product.productPrice = productPrice !== undefined && productPrice !== "" ? Number(productPrice) : product.productPrice;
         product.category = category || product.category;
         product.brand = brand || product.brand;
         product.productImg = updatedImages;
@@ -160,7 +164,7 @@ export const updateProduct = async (req, res) => {
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message: error.message
+            message: "The request could not be completed"
         })
     }
 }
