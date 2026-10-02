@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/lib/apiBase'
 import React, { useState } from 'react'
 import { Button } from './button'
 import { ArrowRight, Minus, Plus, ShieldCheck, ShoppingCart } from 'lucide-react'
@@ -17,7 +18,7 @@ const ProductDesc = ({ product }) => {
     if (!accessToken) { toast.error('Sign in to add products to your cart.'); navigate('/login'); return }
     setAdding(true)
     try {
-      const { data } = await axios.post(`${import.meta.env.VITE_URL}/api/v1/cart/add`, { productId: product._id }, { headers: { Authorization: `Bearer ${accessToken}` }, withCredentials: true })
+      const { data } = await axios.post(`${API_BASE_URL}/api/v1/cart/add`, { productId: product._id }, { headers: { Authorization: `Bearer ${accessToken}` }, withCredentials: true })
       if (!data.success) throw new Error(data.message || 'Could not add product')
       dispatch(setCart(data.cart))
       toast.success('Added to your cart')

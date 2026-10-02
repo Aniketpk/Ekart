@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/lib/apiBase'
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
@@ -21,7 +22,7 @@ const SingleProduct = () => {
     useEffect(() => {
         if (storeProduct) return undefined
         let active = true
-        axios.get(`${import.meta.env.VITE_URL}/api/v1/product/getallproducts`)
+        axios.get(`${API_BASE_URL}/api/v1/product/getallproducts`)
             .then(({ data }) => {
                 if (!data.success || !Array.isArray(data.products)) throw new Error('Catalog unavailable')
                 if (active) {

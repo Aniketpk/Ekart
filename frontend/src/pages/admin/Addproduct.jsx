@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/lib/apiBase'
 import ImageUpload from '@/components/ImageUpload'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
@@ -51,7 +52,7 @@ const Addproduct = () => {
     })
     try {
       setLoading(true);
-      const res = await axios.post(`${import.meta.env.VITE_URL}/api/v1/product/add`, formData, {
+      const res = await axios.post(`${API_BASE_URL}/api/v1/product/add`, formData, {
         headers: {
           Authorization: `Bearer ${accessToken}`
         }

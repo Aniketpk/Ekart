@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/lib/apiBase'
 
 import { OrderCard } from '@/components/ui/OrderCard'
 import axios from 'axios'
@@ -16,7 +17,7 @@ const MyOrder = () => {
         setLoadError(false)
         try {
             const accessToken = localStorage.getItem('accessToken') 
-            const res = await axios.get(`${import.meta.env.VITE_URL}/api/v1/order/myorder`,{
+            const res = await axios.get(`${API_BASE_URL}/api/v1/order/myorder`,{
                 headers:{Authorization: `Bearer ${accessToken}`}
             })
             if(res.data.success){

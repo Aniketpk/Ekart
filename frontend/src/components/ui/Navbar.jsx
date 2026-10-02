@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/lib/apiBase'
 import React, { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { ShoppingCart, Search, User, Menu, X } from 'lucide-react'
@@ -44,7 +45,7 @@ const Navbar = () => {
   }
   const logoutHandler = async () => {
     try {
-      const res = await axios.post(`${import.meta.env.VITE_URL}/api/v1/user/logout`, {}, { headers: { Authorization: `Bearer ${accessToken}` } })
+      const res = await axios.post(`${API_BASE_URL}/api/v1/user/logout`, {}, { headers: { Authorization: `Bearer ${accessToken}` } })
       if (res.data.success) toast.success(res.data.message)
     } catch (error) { toast.error(error.response?.data?.message || 'Logout failed') }
     finally { setMenuOpen(false); localStorage.removeItem('accessToken'); dispatch(setUser(null)); navigate('/') }

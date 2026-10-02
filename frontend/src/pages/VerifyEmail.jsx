@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/lib/apiBase'
 import React, { useCallback, useEffect, useState } from 'react'
 import axios from 'axios'
 import { Link, useNavigate, useParams } from 'react-router-dom'
@@ -9,7 +10,7 @@ const VerifyEmail = () => {
 
     const verifyEmail = useCallback(async () => {
         try {
-            const res = await axios.post(`${import.meta.env.VITE_URL}/api/v1/user/verify`,{},{
+            const res = await axios.post(`${API_BASE_URL}/api/v1/user/verify`,{},{
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/lib/apiBase'
 import React, { useState, useEffect, useCallback } from 'react'
 import axios from 'axios'
 import { Input } from '@/components/ui/input'
@@ -14,7 +15,7 @@ const AdminUsers = () => {
   const getAllusers = useCallback(async () => {
     const accessToken = localStorage.getItem("accessToken");
     try {
-      const res = await axios.get(`${import.meta.env.VITE_URL}/api/v1/user/all-user`, {
+      const res = await axios.get(`${API_BASE_URL}/api/v1/user/all-user`, {
         headers: {
           Authorization: `Bearer ${accessToken}`
         }

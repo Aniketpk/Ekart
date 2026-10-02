@@ -13,8 +13,13 @@ export default defineConfig({
     host: true,
     proxy: {
       '/api': {
-        target: 'http://127.0.0.1:3000',
+        target: 'https://ekart-df9t.onrender.com',
         changeOrigin: true,
+        configure: (proxy) => {
+          // Browser traffic is same-origin in development; remove Origin upstream so
+          // the production API's CORS allowlist remains limited to its real frontend.
+          proxy.on('proxyReq', (proxyReq) => proxyReq.removeHeader('origin'))
+        },
       },
     },
   },

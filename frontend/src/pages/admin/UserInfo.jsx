@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/lib/apiBase'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, Loader2 } from 'lucide-react'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -30,7 +31,7 @@ const UserInfo = () => {
   const getUser = useCallback(async () => {
     const accessToken = localStorage.getItem("accessToken")
     try {
-      const res = await axios.get(`${import.meta.env.VITE_URL}/api/v1/user/get-user/${id}`, {
+      const res = await axios.get(`${API_BASE_URL}/api/v1/user/get-user/${id}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`
         
@@ -77,7 +78,7 @@ const UserInfo = () => {
       if (file) {
         formData.append("file", file)
       }
-      const res = await axios.put(`${import.meta.env.VITE_URL}/api/v1/user/update/${id}`, formData, {
+      const res = await axios.put(`${API_BASE_URL}/api/v1/user/update/${id}`, formData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": undefined

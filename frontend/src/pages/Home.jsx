@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/lib/apiBase'
 import React, { useCallback, useEffect, useState } from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
@@ -21,7 +22,7 @@ const Home = () => {
   const loadProducts = useCallback(async () => {
     setLoading(true); setError(false)
     try {
-      const { data } = await axios.get(`${import.meta.env.VITE_URL}/api/v1/product/getallproducts`)
+      const { data } = await axios.get(`${API_BASE_URL}/api/v1/product/getallproducts`)
       if (!data.success || !Array.isArray(data.products)) throw new Error('Catalog unavailable')
       setProducts(data.products)
     } catch { setError(true) } finally { setLoading(false) }
@@ -30,7 +31,7 @@ const Home = () => {
   const featureProduct = products.find((item) => item.productImg?.[0]?.url)
 
   return <>
-    <Hero product={featureProduct} />
+    <Hero />
     <section className="relative z-10 mx-auto -mt-7 max-w-[1240px] px-4 sm:-mt-9 sm:px-6">
       <div className="glass-surface-strong grid grid-cols-1 divide-y divide-slate-200/70 rounded-[1.5rem] p-2 sm:grid-cols-3 sm:divide-x sm:divide-y-0 sm:rounded-[1.75rem] sm:p-3">
         {[{ icon: <PackageSearch size={20} />, title: 'Live catalog', detail: 'Products listed in E-Kart' }, { icon: <ShieldCheck size={20} />, title: 'Verified payment', detail: 'Payment is checked before confirmation' }, { icon: <BadgeCheck size={20} />, title: 'Order history', detail: 'Review orders from your account' }].map(({ icon, title, detail }) => <div key={title} className="flex items-center gap-4 px-4 py-4 sm:px-6"><span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-[#e8f0f6] text-[#173b5c]">{icon}</span><span><strong className="block text-sm font-semibold text-slate-900">{title}</strong><span className="mt-0.5 block text-xs leading-5 text-slate-500">{detail}</span></span></div>)}

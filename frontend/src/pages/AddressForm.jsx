@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/lib/apiBase'
 import { useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
@@ -37,7 +38,7 @@ export default function AddressForm() {
   const startPayment = async () => {
     if (!selected || !items.length) return
     const accessToken = localStorage.getItem('accessToken')
-    const apiUrl = (import.meta.env.VITE_URL || '').trim()
+    const apiUrl = API_BASE_URL.trim()
     const razorpayKeyId = (import.meta.env.VITE_RAZORPAY_KEY_ID || '').trim()
     if (!window.Razorpay || !razorpayKeyId) {
       toast.error('Payment is unavailable right now. Please try again later.')

@@ -216,19 +216,34 @@ export const getSalesData = async (req, res) => {
         const thirtyDaysAgo = new Date()
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
 
-        const salesByDate = await Order.aggregate([
+        let salesByDate = await Order.aggregate([
             {
                 $match: { status: "Paid", createdAt: { $gte: thirtyDaysAgo } }
             },
             {
                 $group: {
-                    _id: { $dateToString: { format: "%d-%m-%Y", date: "$createdAt" } },
+                    _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
                     amount: { $sum: "$amount" },
                 }
-
             },
             { $sort: { _id: 1 } }
         ])
+
+        // If no sales in the last 30 days, fallback to all paid orders so the dashboard graph has data
+        if (!salesByDate.length) {
+            salesByDate = await Order.aggregate([
+                {
+                    $match: { status: "Paid" }
+                },
+                {
+                    $group: {
+                        _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+                        amount: { $sum: "$amount" },
+                    }
+                },
+                { $sort: { _id: 1 } }
+            ])
+        }
 
         const formattedSalesByDate = salesByDate.map((item) => ({
             date: item._id,

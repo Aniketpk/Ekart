@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/lib/apiBase'
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 
@@ -11,7 +12,7 @@ const AdminOrders = () => {
     const fetchOrders = async () => {
       try {
         const { data } = await axios.get(
-          `${import.meta.env.VITE_URL}/api/v1/order/all`,
+          `${API_BASE_URL}/api/v1/order/all`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,

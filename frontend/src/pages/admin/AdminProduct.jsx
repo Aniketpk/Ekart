@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/lib/apiBase'
 import { Input } from '@/components/ui/input'
 import { Edit, Search, Trash, Trash2 } from 'lucide-react'
 import React, { useState } from 'react'
@@ -85,7 +86,7 @@ const AdminProduct = () => {
       });
 
     try {
-      const res = await axios.put(`${import.meta.env.VITE_URL}/api/v1/product/update/${editProduct._id}`, formData, {
+      const res = await axios.put(`${API_BASE_URL}/api/v1/product/update/${editProduct._id}`, formData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'Content-Type': 'multipart/form-data'
@@ -109,7 +110,7 @@ const AdminProduct = () => {
   const deleteProductHandler = async (productid) => {
     try {
       const remainingProducts = products.filter((p) => p._id !== productid)
-      const res = await axios.delete(`${import.meta.env.VITE_URL}/api/v1/product/delete/${productid}`, {
+      const res = await axios.delete(`${API_BASE_URL}/api/v1/product/delete/${productid}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`
         }

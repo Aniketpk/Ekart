@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/lib/apiBase'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
@@ -14,7 +15,7 @@ export default function OrderSuccess() {
   const loadLatestOrder = useCallback(async () => {
     try {
       const accessToken = localStorage.getItem('accessToken')
-      const { data } = await axios.get(`${import.meta.env.VITE_URL}/api/v1/order/myorder`, {
+      const { data } = await axios.get(`${API_BASE_URL}/api/v1/order/myorder`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       const paidOrders = (data.orders || []).filter((item) => item.status === 'Paid')

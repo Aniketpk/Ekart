@@ -1,7 +1,8 @@
+import { API_BASE_URL } from '@/lib/apiBase'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import axios from 'axios'
 import React, { useCallback, useEffect, useState } from 'react'
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
 const AdminSales = () => {
   const [stats, setStats] = useState({
@@ -15,13 +16,35 @@ const AdminSales = () => {
   const fetchStats = useCallback(async () => {
     try {
       const accessToken = localStorage.getItem("accessToken")
-      const res = await axios.get(`${import.meta.env.VITE_URL}/api/v1/order/sales`, {
+      const res = await axios.get(`${API_BASE_URL}/api/v1/order/sales`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         }
       })
       if (res.data.success) {
-        setStats(res.data)
+        let salesData = res.data.salesByDate || []
+        if (!salesData.length) {
+          try {
+            const allRes = await axios.get(`${API_BASE_URL}/api/v1/order/all`, {
+              headers: { Authorization: `Bearer ${accessToken}` }
+            })
+            if (allRes.data.success && Array.isArray(allRes.data.orders)) {
+              const grouped = {}
+              allRes.data.orders
+                .filter((o) => o.status === 'Paid')
+                .forEach((o) => {
+                  const d = new Date(o.createdAt).toISOString().split('T')[0]
+                  grouped[d] = (grouped[d] || 0) + (o.amount || 0)
+                })
+              salesData = Object.entries(grouped)
+                .map(([date, amount]) => ({ date, amount }))
+                .sort((a, b) => a.date.localeCompare(b.date))
+            }
+          } catch (e) {
+            console.error('Fallback orders fetch failed:', e)
+          }
+        }
+        setStats({ ...res.data, salesByDate: salesData })
       }
     } catch (error) {
       console.log(error)
@@ -32,6 +55,23 @@ const AdminSales = () => {
     const timer = window.setTimeout(() => { void fetchStats() }, 0)
     return () => window.clearTimeout(timer)
   }, [fetchStats])
+
+  const formatDateTick = (dateStr) => {
+    if (!dateStr) return ''
+    try {
+      const parts = dateStr.split('-')
+      if (parts.length === 3) {
+        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+        const day = parts[parts[0].length === 4 ? 2 : 0]
+        const m = parseInt(parts[1], 10) - 1
+        return `${day} ${months[m] || ''}`
+      }
+      return dateStr
+    } catch {
+      return dateStr
+    }
+  }
+
   return (
     <div className='w-full'>
       <div className='grid gap-6 lg:grid-cols-4 p-6'>
@@ -64,27 +104,36 @@ const AdminSales = () => {
         {/**sales chats */}
         <Card className="lg:col-span-4 shadow-ambient border-[#f0f0f0]">
           <CardHeader>
-            <CardTitle className="font-display">Sales Last 30 days</CardTitle>
+            <CardTitle className="font-display">Sales Overview & Trends</CardTitle>
           </CardHeader>
-          <CardContent style={{ height: 350 }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={stats.salesByDate} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e0e0e0" />
-                <XAxis dataKey="date" tick={{ fontSize: 12, fill: '#5c5c6d' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 12, fill: '#5c5c6d' }} axisLine={false} tickLine={false} tickFormatter={(value) => `₹${value}`} />
-                <Tooltip
-                  contentStyle={{ borderRadius: '8px', border: '1px solid #f0f0f0', boxShadow: '0 4px 20px rgba(26, 35, 126, 0.08)' }}
-                  itemStyle={{ color: '#173b5c', fontWeight: 'bold' }}
-                />
-                <Area type="monotone" dataKey="amount" stroke="#173b5c" strokeWidth={3} fillOpacity={1} fill="url(#colorSales)" />
-                <defs>
-                  <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#173b5c" stopOpacity={0.2} />
-                    <stop offset="95%" stopColor="#173b5c" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-              </AreaChart>
-            </ResponsiveContainer>
+          <CardContent style={{ height: 350, minHeight: 350 }}>
+            {stats.salesByDate && stats.salesByDate.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={300}>
+                <BarChart data={stats.salesByDate} margin={{ top: 15, right: 20, left: 10, bottom: 5 }} barCategoryGap="20%">
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e0e0e0" />
+                  <XAxis dataKey="date" tick={{ fontSize: 12, fill: '#5c5c6d' }} tickFormatter={formatDateTick} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 12, fill: '#5c5c6d' }} axisLine={false} tickLine={false} tickFormatter={(value) => `₹${Number(value).toLocaleString('en-IN')}`} />
+                  <Tooltip
+                    contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 8px 24px rgba(23, 59, 92, 0.12)' }}
+                    itemStyle={{ color: '#173b5c', fontWeight: 'bold' }}
+                    formatter={(value) => [`₹${Number(value).toLocaleString('en-IN')}`, 'Sales']}
+                    labelFormatter={(label) => `Date: ${formatDateTick(label)}`}
+                  />
+                  <Bar
+                    dataKey="amount"
+                    name="Sales"
+                    fill="#173b5c"
+                    maxBarSize={36}
+                    radius={[7, 7, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex h-full flex-col items-center justify-center text-center p-6">
+                <p className="font-semibold text-slate-700">No sales recorded yet</p>
+                <p className="mt-1 text-xs text-slate-500">Paid customer orders will automatically appear on this timeline.</p>
+              </div>
+            )}
           </CardContent>
         </Card>
 

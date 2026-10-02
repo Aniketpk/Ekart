@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/lib/apiBase'
 import React, { useCallback, useEffect, useState } from 'react'
 import { OrderCard } from '@/components/ui/OrderCard'
 import axios from 'axios'
@@ -11,7 +12,7 @@ const ShowUserOrders = () => {
   const getUserOrders = useCallback(async () => {
     try {
       const accessToken = localStorage.getItem("accessToken")
-      const res = await axios.get(`${import.meta.env.VITE_URL}/api/v1/order/user-order/${params.userId}`, {
+      const res = await axios.get(`${API_BASE_URL}/api/v1/order/user-order/${params.userId}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`
         }

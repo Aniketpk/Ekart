@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/lib/apiBase'
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
@@ -16,7 +17,7 @@ export default function Signup() {
     try {
       setLoading(true)
       const { firstName, lastName, email, password } = formData
-      const res = await axios.post(`${import.meta.env.VITE_URL}/api/v1/user/register`, { firstName, lastName, email, password }, { headers: { 'Content-Type': 'application/json' } })
+      const res = await axios.post(`${API_BASE_URL}/api/v1/user/register`, { firstName, lastName, email, password }, { headers: { 'Content-Type': 'application/json' } })
       if (res.data.success) { navigate('/verify'); toast.success(res.data.message) }
     } catch (error) { toast.error(error.response?.data?.message || 'Something went wrong') }
     finally { setLoading(false) }

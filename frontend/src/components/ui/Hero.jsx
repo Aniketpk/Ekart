@@ -3,7 +3,7 @@ import { Button } from './button'
 import { ArrowRight, Sparkles } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
-const Hero = ({ product }) => {
+const Hero = ({ image = "/hero.png" }) => {
   const navigate = useNavigate()
   return (
     <section className="relative isolate min-h-[610px] overflow-hidden bg-[#10243a] pt-24 text-white sm:pt-28 lg:min-h-[700px]">
@@ -21,7 +21,7 @@ const Hero = ({ product }) => {
         </div>
         <div className="relative flex min-h-[260px] items-center justify-center md:min-h-[420px]">
           <div className="absolute h-[72%] w-[78%] rounded-[48%] bg-sky-200/20 blur-[75px]" />
-          <img src="/hero.png" alt="Curated electronics from the E-Kart catalog" fetchPriority="high" className="relative z-10 max-h-[420px] w-full max-w-[590px] object-contain drop-shadow-[0_36px_30px_rgba(0,0,0,.34)] transition-transform duration-700 hover:scale-[1.025] lg:max-h-[510px]" />
+          <img src={image} alt="Curated electronics from the E-Kart catalog" fetchPriority="high" className="relative z-10 max-h-[420px] w-full max-w-[590px] object-contain drop-shadow-[0_36px_30px_rgba(0,0,0,.34)] transition-transform duration-700 hover:scale-[1.025] lg:max-h-[510px]" />
         </div>
       </div>
     </section>

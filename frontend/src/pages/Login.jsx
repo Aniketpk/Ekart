@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/lib/apiBase'
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
@@ -17,7 +18,7 @@ export default function Login() {
     event.preventDefault()
     try {
       setLoading(true)
-      const res = await axios.post(`${import.meta.env.VITE_URL}/api/v1/user/login`, formData, { headers: { 'Content-Type': 'application/json' } })
+      const res = await axios.post(`${API_BASE_URL}/api/v1/user/login`, formData, { headers: { 'Content-Type': 'application/json' } })
       if (res.data.success) { localStorage.setItem('accessToken', res.data.accessToken); dispatch(setUser(res.data.user)); navigate('/'); toast.success(res.data.message) }
     } catch (error) { toast.error(error.response?.data?.message || 'Something went wrong') }
     finally { setLoading(false) }

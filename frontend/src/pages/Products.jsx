@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/lib/apiBase'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import FilterSidebar from '../components/ui/FilterSidebar'
@@ -36,7 +37,7 @@ const Products = () => {
         try {
             setLoading(true)
             setLoadError(false)
-            const response = await axios.get(`${import.meta.env.VITE_URL}/api/v1/product/getallproducts`)
+            const response = await axios.get(`${API_BASE_URL}/api/v1/product/getallproducts`)
             if (response.data.success) {
                 setAllProducts(response.data.products)
                 dispatch(setProducts(response.data.products))

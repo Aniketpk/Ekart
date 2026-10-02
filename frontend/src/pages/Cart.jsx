@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/lib/apiBase'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
@@ -20,7 +21,7 @@ export default function Cart() {
   const loadCart = useCallback(async () => {
     setLoading(true); setLoadError(false)
     try {
-      const { data } = await axios.get(`${import.meta.env.VITE_URL}/api/v1/cart/`, { headers: { Authorization: `Bearer ${accessToken}` } })
+      const { data } = await axios.get(`${API_BASE_URL}/api/v1/cart/`, { headers: { Authorization: `Bearer ${accessToken}` } })
       if (data.success) dispatch(setCart(data.cart))
     } catch { setLoadError(true) } finally { setLoading(false) }
   }, [accessToken, dispatch])
@@ -28,13 +29,13 @@ export default function Cart() {
 
   const updateQuantity = async (productId, type) => {
     try {
-      const { data } = await axios.post(`${import.meta.env.VITE_URL}/api/v1/cart/update`, { productId, type }, { headers: { Authorization: `Bearer ${accessToken}` }, withCredentials: true })
+      const { data } = await axios.post(`${API_BASE_URL}/api/v1/cart/update`, { productId, type }, { headers: { Authorization: `Bearer ${accessToken}` }, withCredentials: true })
       if (data.success) { dispatch(setCart(data.cart)); toast.success(data.message) }
     } catch (error) { toast.error(error.response?.data?.message || 'Something went wrong') }
   }
   const removeItem = async (productId) => {
     try {
-      const { data } = await axios.delete(`${import.meta.env.VITE_URL}/api/v1/cart/remove`, { data: { productId }, headers: { Authorization: `Bearer ${accessToken}` }, withCredentials: true })
+      const { data } = await axios.delete(`${API_BASE_URL}/api/v1/cart/remove`, { data: { productId }, headers: { Authorization: `Bearer ${accessToken}` }, withCredentials: true })
       if (data.success) { dispatch(setCart(data.cart)); toast.success(data.message) }
     } catch (error) { toast.error(error.response?.data?.message || 'Something went wrong') }
   }

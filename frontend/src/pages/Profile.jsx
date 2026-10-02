@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/lib/apiBase'
 import { Button } from "@/components/ui/button"
 import { useParams } from "react-router-dom"
 import { useState, useEffect, useRef } from "react"
@@ -46,7 +47,7 @@ const Profile = () => {
         const fetchOrders = async () => {
             try {
                 const accessToken = localStorage.getItem("accessToken")
-                const res = await axios.get(`${import.meta.env.VITE_URL}/api/v1/order/myorder`, {
+                const res = await axios.get(`${API_BASE_URL}/api/v1/order/myorder`, {
                     headers: { Authorization: `Bearer ${accessToken}` }
                 })
                 if (res.data.success && res.data.orders) {
@@ -128,7 +129,7 @@ const Profile = () => {
             if (file) {
                 formData.append("file", file)
             }
-            const res = await axios.put(`${import.meta.env.VITE_URL}/api/v1/user/update/${userId}`, formData, {
+            const res = await axios.put(`${API_BASE_URL}/api/v1/user/update/${userId}`, formData, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                     "Content-Type": undefined

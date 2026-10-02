@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/lib/apiBase'
 
 import { lazy, Suspense } from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
@@ -158,7 +159,7 @@ const App = () => {
     const fetchCart = async () => {
       if (accessToken) {
         try {
-          const res = await axios.get(`${import.meta.env.VITE_URL}/api/v1/cart`, {
+          const res = await axios.get(`${API_BASE_URL}/api/v1/cart`, {
             headers: {
               Authorization: `Bearer ${accessToken}`
             },
