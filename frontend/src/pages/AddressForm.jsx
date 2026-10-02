@@ -39,8 +39,7 @@ export default function AddressForm() {
     if (!selected || !items.length) return
     const accessToken = localStorage.getItem('accessToken')
     const apiUrl = API_BASE_URL.trim()
-    const razorpayKeyId = (import.meta.env.VITE_RAZORPAY_KEY_ID || '').trim()
-    if (!window.Razorpay || !razorpayKeyId) {
+    if (!window.Razorpay) {
       toast.error('Payment is unavailable right now. Please try again later.')
       return
     }
@@ -58,7 +57,8 @@ export default function AddressForm() {
           country: selected.country,
         },
       }, { headers: { Authorization: `Bearer ${accessToken}` } })
-      if (!data.success || !data.order?.id) throw new Error(data.message || 'Could not create your order')
+      const razorpayKeyId = typeof data.razorpayKeyId === 'string' ? data.razorpayKeyId.trim() : ''
+      if (!data.success || !data.order?.id || !razorpayKeyId) throw new Error(data.message || 'Could not create your order')
       const payment = new window.Razorpay({
         key: razorpayKeyId,
         amount: data.order.amount,

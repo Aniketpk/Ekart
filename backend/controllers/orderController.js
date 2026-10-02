@@ -68,7 +68,8 @@ export const createOrder = async (req, res) => {
         await newOrder.save()
         res.json({
             success: true,
-            order: razorpayOrder
+            order: razorpayOrder,
+            razorpayKeyId: process.env.RAZORPAY_KEY_ID
         })
     } catch (error) {
         console.error("Order creation failed:", error.name);

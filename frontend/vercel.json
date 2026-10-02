@@ -1,6 +1,10 @@
 {
     "rewrites": [
         {
+            "source": "/api/(.*)",
+            "destination": "https://ekart-df9t.onrender.com/api/$1"
+        },
+        {
             "source": "/(.*)",
             "destination": "/index.html"
         }

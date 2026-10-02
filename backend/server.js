@@ -23,6 +23,7 @@ const developmentOrigins = [
 ];
 const allowedOrigins = [
     process.env.FRONTEND_URL,
+    "https://ekart-blue.vercel.app",
     ...(process.env.NODE_ENV === 'production' ? [] : developmentOrigins)
 ].filter(Boolean);
 
